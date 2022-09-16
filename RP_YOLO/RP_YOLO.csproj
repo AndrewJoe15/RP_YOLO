@@ -73,7 +73,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="Yolov5Net.Scorer">
-      <HintPath>..\packages\Yolov5Net.Scorer.dll</HintPath>
+      <HintPath>..\dll\Yolov5Net.Scorer.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
