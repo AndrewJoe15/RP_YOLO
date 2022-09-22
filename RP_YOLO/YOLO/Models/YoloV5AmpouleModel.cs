@@ -8,11 +8,13 @@ namespace RP_YOLO.YOLO.Models
 {
     internal class YoloV5AmpouleModel : YoloModel
     {
+        public static int classCount = 2;
+
         public override int Width { get; set; } = 640;
         public override int Height { get; set; } = 640;
         public override int Depth { get; set; } = 3;
 
-        public override int Dimensions { get; set; } = 7; // = 分类数 + 5
+        public override int Dimensions { get; set; } = classCount + 5; // = 分类数 + 5
 
         public override int[] Strides { get; set; } = new int[] { 8, 16, 32 };
 
@@ -33,8 +35,8 @@ namespace RP_YOLO.YOLO.Models
 
         public override List<YoloLabel> Labels { get; set; } = new List<YoloLabel>()
         {
-            new YoloLabel { Id = 1, Name = "OK" , Color = Color.Green},
-            new YoloLabel { Id = 2, Name = "NG" , Color = Color.Red}
+            new YoloLabel { Id = 0, Name = "OK" , Color = Color.Green},
+            new YoloLabel { Id = 1, Name = "NG" , Color = Color.Red}
         };
 
         public override bool UseDetect { get; set; } = true;
