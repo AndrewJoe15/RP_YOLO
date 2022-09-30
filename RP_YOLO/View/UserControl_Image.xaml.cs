@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -47,14 +49,33 @@ namespace RP_YOLO.View
 
         public void ShowImage(System.Drawing.Image image)
         {
-            System.IO.MemoryStream ms = new System.IO.MemoryStream();
-            image.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+            try
+            {
+                if (image == null)
+                    return;
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    image.Save(stream, ImageFormat.Gif);
+                    SetImageSource(stream.ToArray());
+                }                
+            }
+            finally
+            {
+                if (image != null)
+                {
+                    image.Dispose();
+                }
+            }
+        }
+
+        public void SetImageSource(byte[] buffer)
+        {
             BitmapImage bi = new BitmapImage();
             bi.BeginInit();
-            bi.StreamSource = new MemoryStream(ms.ToArray()); // 不要直接使用 ms
+            bi.StreamSource = new MemoryStream(buffer);
             bi.EndInit();
             img_image.Source = bi;
-            ms.Close();
         }
+
     }
 }

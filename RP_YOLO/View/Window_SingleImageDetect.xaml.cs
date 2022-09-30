@@ -19,6 +19,8 @@ using Yolov5Net;
 using Yolov5Net.Scorer;
 using RP_YOLO.YOLO.Models;
 using System.Collections.ObjectModel;
+using Microsoft.ML.OnnxRuntime;
+using RP_YOLO.Model;
 
 namespace RP_YOLO.View
 {
@@ -79,8 +81,11 @@ namespace RP_YOLO.View
             {
                 _onnxPath = tbx_modelFile.Text = openFileDialog.FileName;
 
+                //使用CUDA
+                SessionOptions sessionOptions = new SessionOptions();
+                sessionOptions.AppendExecutionProvider_CUDA();
                 //加载模型文件
-                _scorer = new YoloScorer<YoloV5AmpouleModel>(_onnxPath);
+                _scorer = new YoloScorer<YoloV5AmpouleModel>(_onnxPath, sessionOptions);
             }
         }
 
@@ -177,16 +182,7 @@ namespace RP_YOLO.View
                         result.NG++;
                         break;
                 }
-
-
             }
         }
-    }
-
-    public class DetectResult
-    {
-        public int OK { get; set; }
-        public int NG { get; set; }
-        public long during { get; set; }
     }
 }

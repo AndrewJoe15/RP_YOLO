@@ -28,11 +28,18 @@ namespace RP_YOLO
             InitializeComponent();
         }
 
-        private void btn_YOLOV5_Click(object sender, RoutedEventArgs e)
+        private void btn_YOLOV5_SingleImage_Click(object sender, RoutedEventArgs e)
         {
             Window_SingleImageDetect window_SingleImageDetect = new Window_SingleImageDetect();
             window_SingleImageDetect.Owner = this;
             window_SingleImageDetect.Show();
+        }
+
+        private void btn_YOLOV5_camera_Click(object sender, RoutedEventArgs e)
+        {
+            Window_CameraStreamDetect window_CameraStreamDetect = new Window_CameraStreamDetect();
+            window_CameraStreamDetect.Owner = this;
+            window_CameraStreamDetect.Show();
         }
     }
 }

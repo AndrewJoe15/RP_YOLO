@@ -7,7 +7,11 @@
         mc:Ignorable="d"
         Title="RPSoft" Height="450" Width="800">
     <Grid>
-        <Button x:Name="btn_YOLOV5" Width="150" Content="目标检测" Style="{DynamicResource MaterialDesignPaperDarkButton}"
-                Click="btn_YOLOV5_Click"/>
+        <StackPanel VerticalAlignment="Center">            
+            <Button x:Name="btn_YOLOV5_singleImage" Width="150" Content="目标检测(图片)" Style="{DynamicResource MaterialDesignPaperDarkButton}"
+                    Click="btn_YOLOV5_SingleImage_Click"/>
+            <Button x:Name="btn_YOLOV5_camera" Width="150" Content="目标检测（相机）" Style="{DynamicResource MaterialDesignPaperDarkButton}"
+                    Click="btn_YOLOV5_camera_Click"/>
+        </StackPanel>
     </Grid>
 </Window>

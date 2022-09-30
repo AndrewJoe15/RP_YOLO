@@ -1,0 +1,106 @@
+﻿<Window x:Class="RP_YOLO.View.Window_CameraStreamDetect"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:RP_YOLO.View"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      mc:Ignorable="d" 
+      d:DesignHeight="720" d:DesignWidth="1080"
+      Title="目标检测"
+      TextElement.Foreground="{DynamicResource MaterialDesignLightForeground}"
+      Background="{DynamicResource MaterialDesignLightBackground}"
+      TextElement.FontWeight="Medium"
+      TextElement.FontSize="14"
+      FontFamily="{materialDesign:MaterialDesignFont}">
+    <Window.Resources>
+        <Style TargetType="Menu" >
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontFamily" Value="宋体"/>
+            <Setter Property="Height" Value="auto"/>
+        </Style>
+        <Style TargetType="MenuItem" >
+            <Setter Property="Height" Value="auto"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="5,3,5,3"/>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="20" />
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0" VerticalAlignment="Center">
+            <MenuItem Header="菜单栏">
+                <MenuItem Header="设置"/>
+                <MenuItem Header="设置"/>
+                <MenuItem Header="设置"/>
+            </MenuItem>
+        </Menu>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <DockPanel Grid.Column="0" Margin="10" LastChildFill="False">
+                <Button DockPanel.Dock="Top" HorizontalAlignment="Stretch" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
+                        x:Name="btn_searchCamera" Content="查找相机" Click="btn_searchCamera_Click"/>
+                <ComboBox DockPanel.Dock="Top" x:Name="cbb_cameraList"
+                         SelectionChanged="cbb_cameraList_SelectionChanged" />
+                <Button DockPanel.Dock="Top" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
+                        x:Name="btn_connectCamera" Content="连接" Click="btn_connectCamera_Click"/>
+                <Button DockPanel.Dock="Top" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
+                        x:Name="btn_disconnCamera" Content="断开" Click="btn_disconnCamera_Click"/>
+                <Button DockPanel.Dock="Top" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
+                        x:Name="btn_grabImage" Content="开始采集" Click="btn_grabImage_Click"/>
+                <Button DockPanel.Dock="Top" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
+                        x:Name="btn_stopGrabbing" Content="停止采集" Click="btn_stopGrabbing_Click"/>
+            </DockPanel>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="8*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="模型文件" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBox Grid.Column="1" x:Name="tbx_modelFile" VerticalAlignment="Center" IsReadOnly="True"/>
+                    <Button Grid.Column="2" x:Name="btn_browse_modelFile" Margin="5,3,5,3" Style="{DynamicResource MaterialDesignRaisedLightButton}" 
+                            Content="浏览" Click="btn_browse_modelFile_Click"/>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="显示"/>
+                    <Border Grid.Row="1" Grid.Column="0" Padding="4" Margin="4" Background="White" BorderBrush="#22000000" BorderThickness="1">
+                        <local:UserControl_Image x:Name="uct_image" />
+                    </Border>
+                </Grid>
+                <Button x:Name="btn_run" Content="运行" Grid.Row="2" Width="60" Style="{DynamicResource MaterialDesignRaisedDarkButton}"
+                        Click="btn_run_Click"/>
+            </Grid>
+            <DataGrid x:Name="dg_detectResult" ItemsSource="{Binding }" Grid.Row="1" Grid.Column="2" Width="auto"
+                      AutoGenerateColumns="False" CanUserAddRows="False">
+                <DataGrid.Columns>                    
+                    <DataGridTextColumn Header="OK" Width="auto" Binding="{Binding OK}"/>
+                    <DataGridTextColumn Header="NG" Width="auto" Binding="{Binding NG}"/>
+                    <DataGridTextColumn Header="用时(ms)" Width="auto" Binding="{Binding during}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            
+        </Grid>
+    </Grid>
+</Window>
