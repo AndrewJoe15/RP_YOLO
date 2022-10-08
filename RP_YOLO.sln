@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RP_YOLO", "RP_YOLO\RP_YOLO.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RPSoft_Core", "\\DESKTOP-F6ANS67\RobotPhoenix\华勤上位机\Codes\华勤上位机\RPPCHMI_Core\RPSoft_Core.csproj", "{CDB0D35B-0A6D-42AC-8422-EB4CEFD1C7A7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{B99A3834-3BF6-4965-9AA8-4B379D73B553}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{CDB0D35B-0A6D-42AC-8422-EB4CEFD1C7A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDB0D35B-0A6D-42AC-8422-EB4CEFD1C7A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDB0D35B-0A6D-42AC-8422-EB4CEFD1C7A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B99A3834-3BF6-4965-9AA8-4B379D73B553}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B99A3834-3BF6-4965-9AA8-4B379D73B553}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B99A3834-3BF6-4965-9AA8-4B379D73B553}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B99A3834-3BF6-4965-9AA8-4B379D73B553}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

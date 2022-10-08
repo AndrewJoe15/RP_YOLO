@@ -52,6 +52,12 @@ namespace RP_YOLO.View
 
             detectResults = new ObservableCollection<DetectResult>();
             dg_detectResult.DataContext = detectResults;
+
+            // 初始化控件
+            btn_connectCamera.IsEnabled = true;
+            btn_disconnCamera.IsEnabled = false;
+            btn_grabImage.IsEnabled = false;
+            btn_stopGrabbing.IsEnabled = false;
         }
 
 
@@ -263,6 +269,11 @@ namespace RP_YOLO.View
             m_MyCamera.MV_CC_SetEnumValue_NET("AcquisitionMode", (uint)MyCamera.MV_CAM_ACQUISITION_MODE.MV_ACQ_MODE_CONTINUOUS);
             m_MyCamera.MV_CC_SetEnumValue_NET("TriggerMode", (uint)MyCamera.MV_CAM_TRIGGER_MODE.MV_TRIGGER_MODE_OFF);
 
+            // 设置控件
+            btn_connectCamera.IsEnabled = false;
+            btn_disconnCamera.IsEnabled = true;
+            btn_grabImage.IsEnabled = true;
+            btn_stopGrabbing.IsEnabled = true;
         }
 
         private void btn_disconnCamera_Click(object sender, RoutedEventArgs e)
@@ -282,6 +293,13 @@ namespace RP_YOLO.View
             // ch:关闭设备 | en:Close Device
             m_MyCamera.MV_CC_CloseDevice_NET();
             m_MyCamera.MV_CC_DestroyDevice_NET();
+
+            // 设置控件
+            btn_connectCamera.IsEnabled = true;
+            btn_disconnCamera.IsEnabled = false;
+            btn_grabImage.IsEnabled = false;
+            btn_stopGrabbing.IsEnabled = false;
+            uct_image.ShowImage("");
         }
 
         private void cbb_cameraList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -308,6 +326,12 @@ namespace RP_YOLO.View
                 ShowErrorMsg("Start Grabbing Fail!", nRet);
                 return;
             }
+
+            // 设置控件
+            btn_connectCamera.IsEnabled = false;
+            btn_disconnCamera.IsEnabled = true;
+            btn_grabImage.IsEnabled = false;
+            btn_stopGrabbing.IsEnabled = true;
         }
 
         private void btn_stopGrabbing_Click(object sender, RoutedEventArgs e)
@@ -322,6 +346,11 @@ namespace RP_YOLO.View
             {
                 ShowErrorMsg("Stop Grabbing Fail!", nRet);
             }
+            // 设置控件
+            btn_connectCamera.IsEnabled = true;
+            btn_disconnCamera.IsEnabled = true;
+            btn_grabImage.IsEnabled = true;
+            btn_stopGrabbing.IsEnabled = false;
         }
 
         public void ReceiveThreadProcess()
@@ -369,9 +398,9 @@ namespace RP_YOLO.View
                         continue;
                     }
 
-                    Bitmap bitmap = new Bitmap(m_stFrameInfo.nWidth, m_stFrameInfo.nHeight, PixelFormat.Format8bppIndexed);
+                    Bitmap bitmap = new Bitmap(m_stFrameInfo.nWidth, m_stFrameInfo.nHeight, PixelFormat.Format24bppRgb);
                     Rectangle rect = new Rectangle(0, 0, m_stFrameInfo.nWidth, m_stFrameInfo.nHeight);
-                    BitmapData bitmapData = bitmap.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
+                    BitmapData bitmapData = bitmap.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb);
                     unsafe
                     {
                         Buffer.MemoryCopy(m_BufForFrame.ToPointer(), bitmapData.Scan0.ToPointer(), m_nBufSizeForDriver, m_nBufSizeForDriver);
@@ -382,10 +411,13 @@ namespace RP_YOLO.View
                     {
                         RunDetect(bitmap);
                     }
-                    Dispatcher.Invoke(new Action(delegate
+                    if (m_bGrabbing)
                     {
-                        uct_image.ShowImage(bitmap);
-                    }));
+                        Dispatcher.Invoke(new Action(delegate
+                        {
+                            uct_image.ShowImage(bitmap);
+                        }));
+                    }
                 }
             }
         }

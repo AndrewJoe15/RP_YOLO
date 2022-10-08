@@ -55,7 +55,7 @@ namespace RP_YOLO.View
                     return;
                 using (MemoryStream stream = new MemoryStream())
                 {
-                    image.Save(stream, ImageFormat.Gif);
+                    image.Save(stream, ImageFormat.Bmp);
                     SetImageSource(stream.ToArray());
                 }                
             }
