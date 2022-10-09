@@ -97,7 +97,7 @@
                 <DataGrid.Columns>                    
                     <DataGridTextColumn Header="OK" Width="auto" Binding="{Binding OK}"/>
                     <DataGridTextColumn Header="NG" Width="auto" Binding="{Binding NG}"/>
-                    <DataGridTextColumn Header="用时(ms)" Width="auto" Binding="{Binding during}"/>
+                    <DataGridTextColumn Header="FPS" Width="auto" Binding="{Binding FPS}"/>
                 </DataGrid.Columns>
             </DataGrid>
             

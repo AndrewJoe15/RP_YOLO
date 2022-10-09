@@ -94,7 +94,7 @@ namespace RP_YOLO.View
             {
                 m_isRunning = true;
                 btn_run.Content = "停止";
-
+                detectResults.Add(new DetectResult());
             }
             else
             {
@@ -108,7 +108,14 @@ namespace RP_YOLO.View
             try
             {
                 ObjectDetect(bitmap, out DetectResult result);
-                //detectResults.Add(result);
+                Dispatcher.Invoke(new Action(delegate {
+                    if (detectResults.Count == 0)
+                    {
+                        detectResults.Add(new DetectResult());
+                    }
+                    detectResults.RemoveAt(detectResults.Count - 1);
+                    detectResults.Add(result);
+                }));
             }
             catch (Exception e)
             {
