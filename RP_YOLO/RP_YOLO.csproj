@@ -177,6 +177,7 @@
       <DependentUpon>UserControl_OriginImage.xaml</DependentUpon>
     </Compile>
     <Compile Include="YOLO\Models\YoloV5AmpouleModel.cs" />
+    <Compile Include="YOLO\YOLOV5.cs" />
     <Page Include="View\UserControl_DetectedImage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

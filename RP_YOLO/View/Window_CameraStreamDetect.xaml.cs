@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using RP_YOLO.Model;
 using System.Drawing.Imaging;
+using RP_YOLO.YOLO;
 
 namespace RP_YOLO.View
 {
@@ -41,10 +42,8 @@ namespace RP_YOLO.View
         // ch:用于从驱动获取图像的缓存 | en:Buffer for getting image from driver
         private uint m_nBufSizeForDriver = 0;
 
-
-        private string m_onnxPath; //onnx文件路径
+        YOLOV5<YoloV5AmpouleModel> yolov5;
         private bool m_isRunning = false; //运行flag
-        private YoloScorer<YoloV5AmpouleModel> m_scorer;
 
         public Window_CameraStreamDetect()
         {
@@ -70,13 +69,8 @@ namespace RP_YOLO.View
             DialogResult result = openFileDialog.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)
             {
-                m_onnxPath = tbx_modelFile.Text = openFileDialog.FileName;
-
-                //使用CUDA
-                SessionOptions sessionOptions = new SessionOptions();
-                sessionOptions.AppendExecutionProvider_CUDA();
-                //加载模型文件
-                m_scorer = new YoloScorer<YoloV5AmpouleModel>(m_onnxPath, sessionOptions);
+                string onnxPath = tbx_modelFile.Text = openFileDialog.FileName;
+                yolov5 = new YOLOV5<YoloV5AmpouleModel>(onnxPath);
             }
         }
 
@@ -84,7 +78,7 @@ namespace RP_YOLO.View
 
         private void btn_run_Click(object sender, RoutedEventArgs e)
         {
-            if (m_onnxPath == null)
+            if (string.IsNullOrEmpty(tbx_modelFile.Text))
             {
                 System.Windows.MessageBox.Show("请先选择onnx文件");
                 return;
@@ -107,7 +101,7 @@ namespace RP_YOLO.View
         {
             try
             {
-                ObjectDetect(bitmap, out DetectResult result);
+                yolov5.ObjectDetect(bitmap, out DetectResult result);
                 Dispatcher.Invoke(new Action(delegate {
                     if (detectResults.Count == 0)
                     {
@@ -122,48 +116,6 @@ namespace RP_YOLO.View
                 if (e.GetType() == typeof(System.IO.FileNotFoundException))
                 {
                     System.Windows.MessageBox.Show("请选择源文件");
-                }
-            }
-        }
-
-        /// <summary>
-        /// 目标检测
-        /// </summary>
-        /// <param name="image">输出图片</param>
-        /// <param name="quantity">数组 依次存放各个种类的数量</param>
-        /// <param name="during">检测所用时间</param>
-        private void ObjectDetect(System.Drawing.Image image, out DetectResult result)
-        {
-            result = new DetectResult();
-
-            Stopwatch stopwatch = new Stopwatch();//计时器用来计算目标检测算法执行时间
-            stopwatch.Start();
-            List<YoloPrediction> predictions = m_scorer.Predict(image);
-            stopwatch.Stop();
-            result.during = stopwatch.ElapsedMilliseconds;
-
-            var graphics = Graphics.FromImage(image);
-
-            // 遍历预测结果，画出预测框
-            foreach (var prediction in predictions)
-            {
-                double score = Math.Round(prediction.Score, 2);
-
-                graphics.DrawRectangles(new System.Drawing.Pen(prediction.Label.Color, 2), new[] { prediction.Rectangle });
-
-                var (x, y) = (prediction.Rectangle.X - 3, prediction.Rectangle.Y - 23);
-
-                graphics.DrawString($"{prediction.Label.Name} ({score})", 
-                    new Font("Consolas", 24, GraphicsUnit.Pixel), new SolidBrush(prediction.Label.Color), new PointF(x, y));
-
-                switch (prediction.Label.Id) 
-                {
-                    case 0:
-                        result.OK++;
-                        break;
-                    case 1:
-                        result.NG++;
-                        break;
                 }
             }
         }
