@@ -8,7 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.IO;
 
-using Yolov5Net;
 using Yolov5Net.Scorer;
 using RP_YOLO.YOLO.Models;
 using System.Collections.ObjectModel;
@@ -31,6 +30,7 @@ namespace RP_YOLO.View
 
         public ObservableCollection<DetectResult> detectResults;
 
+        // 相机采集图像******
         private MyCamera.MV_CC_DEVICE_INFO_LIST m_stDeviceList = new MyCamera.MV_CC_DEVICE_INFO_LIST();
         private MyCamera m_MyCamera = new MyCamera();
         private bool m_bGrabbing = false;
@@ -414,12 +414,13 @@ namespace RP_YOLO.View
                     }
                     bitmap.UnlockBits(bitmapData);
 
-                    if (m_isRunning)
-                    {
-                        RunDetect(bitmap);
-                    }
+                    
                     if (m_bGrabbing)
                     {
+                        if (m_isRunning)
+                        {
+                            RunDetect(bitmap);
+                        }
                         Dispatcher.Invoke(new Action(delegate
                         {
                             uct_image.ShowImage(bitmap);
