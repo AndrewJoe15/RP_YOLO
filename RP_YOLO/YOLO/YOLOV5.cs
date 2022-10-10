@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.ML.OnnxRuntime;
 using RP_YOLO.Model;
-using RP_YOLO.YOLO.Models;
 using Yolov5Net.Scorer;
 using Yolov5Net.Scorer.Models.Abstract;
 

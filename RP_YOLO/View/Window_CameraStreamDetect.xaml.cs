@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
-using System.IO;
 
-using Yolov5Net.Scorer;
 using RP_YOLO.YOLO.Models;
 using System.Collections.ObjectModel;
-using Microsoft.ML.OnnxRuntime;
 using MvCamCtrl.NET;
 using System.Runtime.InteropServices;
 using System.Threading;
