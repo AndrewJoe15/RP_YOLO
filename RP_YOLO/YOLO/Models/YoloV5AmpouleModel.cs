@@ -41,9 +41,5 @@ namespace RP_YOLO.YOLO.Models
 
         public override bool UseDetect { get; set; } = true;
 
-        public YoloV5AmpouleModel()
-        {
-
-        }
     }
 }

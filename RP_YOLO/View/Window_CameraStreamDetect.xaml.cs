@@ -36,7 +36,7 @@ namespace RP_YOLO.View
         // ch:用于从驱动获取图像的缓存 | en:Buffer for getting image from driver
         private uint m_nBufSizeForDriver = 0;
 
-        YOLOV5<YoloV5AmpouleModel> yolov5;
+        YOLOV5<YoloV5SolderModel> yolov5;
         private bool m_isRunning = false; //运行flag
 
         public Window_CameraStreamDetect()
@@ -64,7 +64,7 @@ namespace RP_YOLO.View
             if (result == System.Windows.Forms.DialogResult.OK)
             {
                 string onnxPath = tbx_modelFile.Text = openFileDialog.FileName;
-                yolov5 = new YOLOV5<YoloV5AmpouleModel>(onnxPath);
+                yolov5 = new YOLOV5<YoloV5SolderModel>(onnxPath);
             }
         }
 

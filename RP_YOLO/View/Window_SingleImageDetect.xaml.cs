@@ -35,7 +35,7 @@ namespace RP_YOLO.View
         private string _originImagePath { get => _sourceFolderName + "\\" + lsb_sourceFiles.SelectedItem; }//原始图片路径
         private string _onnxPath; //onnx文件路径
         private bool _isRunning = false; //运行flag
-        private YoloScorer<YoloV5AmpouleModel> _scorer;
+        private YoloScorer<YoloV5SolderModel> _scorer;
 
         public Window_SingleImageDetect()
         {
@@ -85,7 +85,7 @@ namespace RP_YOLO.View
                 SessionOptions sessionOptions = new SessionOptions();
                 sessionOptions.AppendExecutionProvider_CUDA();
                 //加载模型文件
-                _scorer = new YoloScorer<YoloV5AmpouleModel>(_onnxPath, sessionOptions);
+                _scorer = new YoloScorer<YoloV5SolderModel>(_onnxPath, sessionOptions);
             }
         }
 

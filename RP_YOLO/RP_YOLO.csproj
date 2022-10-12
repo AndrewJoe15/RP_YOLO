@@ -175,6 +175,7 @@
     <Compile Include="View\UserControl_OriginImage.xaml.cs">
       <DependentUpon>UserControl_OriginImage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="YOLO\Models\YoloV5SolderModel.cs" />
     <Compile Include="YOLO\Models\YoloV5AmpouleModel.cs" />
     <Compile Include="YOLO\YOLOV5.cs" />
     <Page Include="View\UserControl_DetectedImage.xaml">
@@ -234,6 +235,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="YOLO\Weights\yolov5_ampoule.onnx" />
+    <None Include="YOLO\Weights\yolov5_solder.onnx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

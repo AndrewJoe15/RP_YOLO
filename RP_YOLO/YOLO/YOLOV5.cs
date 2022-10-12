@@ -48,7 +48,7 @@ namespace RP_YOLO.YOLO
             {
                 double score = Math.Round(prediction.Score, 2);
 
-                graphics.DrawRectangles(new System.Drawing.Pen(prediction.Label.Color, 2), new[] { prediction.Rectangle });
+                graphics.DrawRectangles(new Pen(prediction.Label.Color, 4), new[] { prediction.Rectangle });
 
                 var (x, y) = (prediction.Rectangle.X - 3, prediction.Rectangle.Y - 23);
 
