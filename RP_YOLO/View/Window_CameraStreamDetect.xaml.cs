@@ -51,13 +51,37 @@ namespace RP_YOLO.View
             btn_disconnCamera.IsEnabled = false;
             btn_grabImage.IsEnabled = false;
             btn_stopGrabbing.IsEnabled = false;
+
+            // 添加事件
+            this.Closing += Window_CameraStreamDetect_Closing;
         }
 
+        private void Window_CameraStreamDetect_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // 关闭程序前的操作
+            // - 停止采集图像
+            if (m_bGrabbing)
+            {
+                e.Cancel = true;
+                System.Windows.MessageBox.Show("正在采集图像，无法退出程序。");
+                return;
+            }
 
+            if (System.Windows.MessageBox.Show("确定退出程序吗？", "确定", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+            {
+                e.Cancel = false;
+                // - 断开相机连接
+                DisconnCamera();
+            }
+            else
+            {
+                e.Cancel = true;
+            }
+        }
 
         private void btn_browse_modelFile_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog { Filter = "onnx files(*.onnx)|*.onnx"};
+            OpenFileDialog openFileDialog = new OpenFileDialog { Filter = "onnx files(*.onnx)|*.onnx" };
             openFileDialog.Title = "请选择模型onnx文件";
 
             DialogResult result = openFileDialog.ShowDialog();
@@ -88,7 +112,7 @@ namespace RP_YOLO.View
             {
                 m_isRunning = false;
                 btn_run.Content = "运行";
-            }            
+            }
         }
 
         private void RunDetect(Bitmap bitmap)
@@ -96,14 +120,15 @@ namespace RP_YOLO.View
             try
             {
                 yolov5.ObjectDetect(bitmap, out DetectResult result);
-                Dispatcher.Invoke(new Action(delegate {
-                    if (detectResults.Count == 0)
-                    {
-                        detectResults.Add(new DetectResult());
-                    }
-                    detectResults.RemoveAt(detectResults.Count - 1);
-                    detectResults.Add(result);
-                }));
+                _ = Dispatcher.InvokeAsync(new Action(delegate
+                  {
+                      if (detectResults.Count == 0)
+                      {
+                          detectResults.Add(new DetectResult());
+                      }
+                      detectResults.RemoveAt(detectResults.Count - 1);
+                      detectResults.Add(result);
+                  }), System.Windows.Threading.DispatcherPriority.Render);
             }
             catch (Exception e)
             {
@@ -226,10 +251,22 @@ namespace RP_YOLO.View
             btn_connectCamera.IsEnabled = false;
             btn_disconnCamera.IsEnabled = true;
             btn_grabImage.IsEnabled = true;
-            btn_stopGrabbing.IsEnabled = true;
+            btn_stopGrabbing.IsEnabled = false;
         }
 
         private void btn_disconnCamera_Click(object sender, RoutedEventArgs e)
+        {
+            DisconnCamera();
+
+            // 设置控件
+            btn_connectCamera.IsEnabled = true;
+            btn_disconnCamera.IsEnabled = false;
+            btn_grabImage.IsEnabled = false;
+            btn_stopGrabbing.IsEnabled = false;
+            uct_image.ShowImage("");
+        }
+
+        private void DisconnCamera()
         {
             // ch:取流标志位清零 | en:Reset flow flag bit
             if (m_bGrabbing == true)
@@ -246,13 +283,6 @@ namespace RP_YOLO.View
             // ch:关闭设备 | en:Close Device
             m_MyCamera.MV_CC_CloseDevice_NET();
             m_MyCamera.MV_CC_DestroyDevice_NET();
-
-            // 设置控件
-            btn_connectCamera.IsEnabled = true;
-            btn_disconnCamera.IsEnabled = false;
-            btn_grabImage.IsEnabled = false;
-            btn_stopGrabbing.IsEnabled = false;
-            uct_image.ShowImage("");
         }
 
         private void cbb_cameraList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -291,6 +321,7 @@ namespace RP_YOLO.View
         {
             // ch:标志位设为false | en:Set flag bit false
             m_bGrabbing = false;
+            m_isRunning = false;
             m_hReceiveThread.Join();
 
             // ch:停止采集 | en:Stop Grabbing
@@ -310,7 +341,7 @@ namespace RP_YOLO.View
         {
             //获取 Payload Size
             MyCamera.MVCC_INTVALUE stParam = new MyCamera.MVCC_INTVALUE();
-            int nRet = m_MyCamera.MV_CC_GetIntValue_NET("PayloadSize", ref stParam) ;
+            int nRet = m_MyCamera.MV_CC_GetIntValue_NET("PayloadSize", ref stParam);
 
             if (nRet != MyCamera.MV_OK)
             {
@@ -360,18 +391,16 @@ namespace RP_YOLO.View
                     }
                     bitmap.UnlockBits(bitmapData);
 
-                    
-                    if (m_bGrabbing)
+
+                    if (m_isRunning)
                     {
-                        if (m_isRunning)
-                        {
-                            RunDetect(bitmap);
-                        }
-                        Dispatcher.Invoke(new Action(delegate
-                        {
-                            uct_image.ShowImage(bitmap);
-                        }));
+                        RunDetect(bitmap);
                     }
+                    // 异步调用显示图像
+                    _ = Dispatcher.InvokeAsync(new Action(delegate
+                      {
+                          uct_image.ShowImage(bitmap);
+                      }), System.Windows.Threading.DispatcherPriority.Render);
                 }
             }
         }

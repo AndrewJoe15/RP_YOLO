@@ -41,5 +41,12 @@ namespace RP_YOLO
             window_CameraStreamDetect.Owner = this;
             window_CameraStreamDetect.Show();
         }
+
+        private void btn_testPage_Click(object sender, RoutedEventArgs e)
+        {
+            Test.Test testPage = new Test.Test();
+            testPage.Owner = this;
+            testPage.Show();
+        }
     }
 }

@@ -160,6 +160,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Model\DetectResult.cs" />
+    <Compile Include="Test\Test.xaml.cs">
+      <DependentUpon>Test.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\UserControl_DetectedImage.xaml.cs">
       <DependentUpon>UserControl_DetectedImage.xaml</DependentUpon>
     </Compile>
@@ -178,6 +181,10 @@
     <Compile Include="YOLO\Models\YoloV5SolderModel.cs" />
     <Compile Include="YOLO\Models\YoloV5AmpouleModel.cs" />
     <Compile Include="YOLO\YOLOV5.cs" />
+    <Page Include="Test\Test.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\UserControl_DetectedImage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
