@@ -252,6 +252,93 @@ namespace RP_YOLO.View
             btn_disconnCamera.IsEnabled = true;
             btn_grabImage.IsEnabled = true;
             btn_stopGrabbing.IsEnabled = false;
+            // - 触发模式
+            GetTriggerMode();
+            // - 获取相机参数
+            txb_exposure.Text = GetCameraParamValue_Float("ExposureTime");
+            txb_gain.Text = GetCameraParamValue_Float("Gain");
+            txb_frameRate.Text = GetCameraParamValue_Float("ResultingFrameRate");
+            // - 获取像素格式
+            GetPixelFormats();
+        }
+
+        private void GetPixelFormats()
+        {
+            MyCamera.MVCC_ENUMVALUE stParam = new MyCamera.MVCC_ENUMVALUE();
+            int nRet = m_MyCamera.MV_CC_GetEnumValue_NET("PixelFormat", ref stParam);
+            if (MyCamera.MV_OK == nRet)
+            {
+                // 获取所有支持的像素格式
+                uint[] results = stParam.nSupportValue;
+                
+                for (int i=0; i<stParam.nSupportedNum; i++ )
+                    cbb_pixelFormat.Items.Add((MyCamera.MvGvspPixelType)results[i]);
+            }
+            // 设置当前选择的像素格式
+            cbb_pixelFormat.SelectedItem = (MyCamera.MvGvspPixelType)stParam.nCurValue;
+        }
+
+        private void GetTriggerMode()
+        {
+            MyCamera.MVCC_ENUMVALUE stParam = new MyCamera.MVCC_ENUMVALUE();
+            int nRet = m_MyCamera.MV_CC_GetTriggerMode_NET(ref stParam);
+            if (MyCamera.MV_OK == nRet)
+            {
+                if (stParam.nCurValue == (uint)MyCamera.MV_CAM_TRIGGER_MODE.MV_TRIGGER_MODE_OFF)
+                    cbb_triggerMode.SelectedIndex = 0;
+                else
+                {
+                    nRet = m_MyCamera.MV_CC_GetTriggerSource_NET(ref stParam);
+                    if (MyCamera.MV_OK == nRet)
+                    {
+                        if (stParam.nCurValue == (uint)MyCamera.MV_CAM_TRIGGER_SOURCE.MV_TRIGGER_SOURCE_SOFTWARE)
+                            cbb_triggerMode.SelectedIndex = 1;
+                        if (stParam.nCurValue == (uint)MyCamera.MV_CAM_TRIGGER_SOURCE.MV_TRIGGER_SOURCE_LINE0)
+                            cbb_triggerMode.SelectedIndex = 2;
+                    }
+                }
+            }
+        }
+
+        private string GetCameraParamValue_Float(string paramKey)
+        {
+            string result = "";
+
+            MyCamera.MVCC_FLOATVALUE stParam = new MyCamera.MVCC_FLOATVALUE();
+            int nRet = m_MyCamera.MV_CC_GetFloatValue_NET(paramKey, ref stParam);
+            if (MyCamera.MV_OK == nRet)
+            {
+                result = stParam.fCurValue.ToString("F1");
+            }
+
+            return result;
+        }
+
+        private int GetCameraParamValue_Enum(string paramKey)
+        {
+            int result = -1;
+
+            MyCamera.MVCC_ENUMVALUE stParam = new MyCamera.MVCC_ENUMVALUE();
+            int nRet = m_MyCamera.MV_CC_GetEnumValue_NET(paramKey, ref stParam);
+            if (MyCamera.MV_OK == nRet)
+            {
+                result = (int)stParam.nCurValue;
+            }
+
+            return result;
+        }
+
+        private void SetCameraParamValue_Float(string paramKey, string strValue)
+        {
+            if (!string.IsNullOrEmpty(strValue))
+            {
+                m_MyCamera.MV_CC_SetFloatValue_NET(paramKey, float.Parse(strValue));
+            }
+        }
+
+        private void SetCameraParamValue_Enum(string paramKey, uint value)
+        {
+            m_MyCamera.MV_CC_SetEnumValue_NET(paramKey, value);
         }
 
         private void btn_disconnCamera_Click(object sender, RoutedEventArgs e)
@@ -259,11 +346,19 @@ namespace RP_YOLO.View
             DisconnCamera();
 
             // 设置控件
+            // - 按钮
             btn_connectCamera.IsEnabled = true;
             btn_disconnCamera.IsEnabled = false;
             btn_grabImage.IsEnabled = false;
             btn_stopGrabbing.IsEnabled = false;
+            // - 图像
             uct_image.ShowImage("");
+            // - 文本框
+            txb_exposure.Text = "";
+            txb_frameRate.Text = "";
+            txb_gain.Text = "";
+            // - 下拉框
+            cbb_pixelFormat.Items.Clear();
         }
 
         private void DisconnCamera()
@@ -454,6 +549,78 @@ namespace RP_YOLO.View
             }
 
             System.Windows.MessageBox.Show(errorMsg, "PROMPT");
+        }
+
+        private void txb_exposure_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            m_MyCamera.MV_CC_SetEnumValue_NET("ExposureAuto", 0);
+            SetCameraParamValue_Float("ExposureTime", txb_exposure.Text);
+        }
+
+        private void txb_gain_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            m_MyCamera.MV_CC_SetEnumValue_NET("GainAuto", 0);
+            SetCameraParamValue_Float("Gain", txb_gain.Text);
+        }
+
+        private void lsb_triggerMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            btn_softTrigger.IsEnabled = false;
+            
+            // cbb_triggerMode.Items
+            // - 0 连续
+            // - 1 软触发
+            // - 2 Line0
+            if (cbb_triggerMode.SelectedIndex == 0)
+            {
+                m_MyCamera.MV_CC_SetEnumValue_NET("TriggerMode", (uint)MyCamera.MV_CAM_TRIGGER_MODE.MV_TRIGGER_MODE_OFF);
+            }
+            else
+            {
+                // ch:打开触发模式 | en:Open Trigger Mode
+                m_MyCamera.MV_CC_SetEnumValue_NET("TriggerMode", (uint)MyCamera.MV_CAM_TRIGGER_MODE.MV_TRIGGER_MODE_ON);
+
+                // ch:触发源选择:0 - Line0; | en:Trigger source select:0 - Line0;
+                //           1 - Line1;
+                //           2 - Line2;
+                //           3 - Line3;
+                //           4 - Counter;
+                //           7 - Software;
+                if (cbb_triggerMode.SelectedIndex == 1)
+                {
+                    m_MyCamera.MV_CC_SetEnumValue_NET("TriggerSource", (uint)MyCamera.MV_CAM_TRIGGER_SOURCE.MV_TRIGGER_SOURCE_SOFTWARE);
+                    btn_softTrigger.IsEnabled = true;
+                }
+                else if (cbb_triggerMode.SelectedIndex == 2)
+                {
+                    m_MyCamera.MV_CC_SetEnumValue_NET("TriggerSource", (uint)MyCamera.MV_CAM_TRIGGER_SOURCE.MV_TRIGGER_SOURCE_LINE0);
+                }
+            }
+        }
+
+        private void btn_softTrigger_Click(object sender, RoutedEventArgs e)
+        {
+            if (!m_bGrabbing || cbb_triggerMode.SelectedIndex != 1)
+                return;
+
+            // ch:触发命令 | en:Trigger command
+            int nRet = m_MyCamera.MV_CC_SetCommandValue_NET("TriggerSoftware");
+            if (MyCamera.MV_OK != nRet)
+            {
+                ShowErrorMsg("Trigger Software Fail!", nRet);
+            }
+        }
+
+        private void cbb_pixelFormat_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cbb_pixelFormat.Items.IsEmpty)
+                return;
+
+            int nRet = m_MyCamera.MV_CC_SetPixelFormat_NET((uint)(MyCamera.MvGvspPixelType)cbb_pixelFormat.SelectedItem);
+            if (MyCamera.MV_OK != nRet)
+            {
+                ShowErrorMsg("Fail to change pixel format!", nRet);
+            }
         }
     }
 }

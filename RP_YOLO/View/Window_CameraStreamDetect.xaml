@@ -75,40 +75,47 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="113"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Grid.Row="0" Content="图像采集"/>
                     <Label Grid.Row="1" Content="触发模式" Margin="15,1,10,1"/>
-                    <ComboBox Grid.Row="1" Grid.Column="1" x:Name="lsb_triggerMode" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" SelectedIndex="0">
+                    <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbb_triggerMode" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                              SelectionChanged="lsb_triggerMode_SelectionChanged">
                         <ComboBoxItem Content="连续"/>
-                    </ComboBox>                    
+                        <ComboBoxItem Content="软触发"/>
+                        <ComboBoxItem Content="Line0"/>
+                    </ComboBox>
                     <Button Grid.Row="2" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
                         x:Name="btn_grabImage" Content="开始采集" Click="btn_grabImage_Click"/>
                     <Button Grid.Row="2" Grid.Column="1" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
                         x:Name="btn_stopGrabbing" Content="停止采集" Click="btn_stopGrabbing_Click"/>
+                    <Button Grid.Row="3" Grid.Column="0" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
+                        x:Name="btn_softTrigger" Content="软触发" Click="btn_softTrigger_Click"/>
                 </Grid>
                 <StackPanel Grid.Row="2">
                     <Label Grid.Column="0" Grid.Row="0" Content="相机参数"/>
                     <DockPanel Margin="5,3,5,3">
                         <Label Content="曝光" Margin="5,1,10,1"/>
-                        <TextBox Text="5000" x:Name="txb_exposure" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                        <TextBox x:Name="txb_exposure" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                 TextChanged="txb_exposure_TextChanged"/>
                     </DockPanel>
                     <DockPanel Margin="5,3,5,3">
                         <Label Content="增益" Margin="5,1,10,1"/>
-                        <TextBox Text="10" x:Name="txb_gain" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                        <TextBox x:Name="txb_gain" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                 TextChanged="txb_gain_TextChanged"/>
                     </DockPanel>
                     <DockPanel Margin="5,3,5,3">
                         <Label Content="帧率" Margin="5,1,10,1"/>
-                        <TextBox Text="24.8" x:Name="txb_frameRate" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                        <TextBox x:Name="txb_frameRate" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" IsReadOnly="True"/>
                     </DockPanel>
                     <DockPanel Margin="5,3,5,3">
                         <Label Content="像素格式" Margin="5,1,10,1"/>
-                        <ComboBox x:Name="lsb_pixelFormat" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" SelectedIndex="0">
-                            <ComboBoxItem Content="BGR 8"/>
-                        </ComboBox>
+                        <ComboBox x:Name="cbb_pixelFormat" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                  SelectionChanged="cbb_pixelFormat_SelectionChanged"/>
                     </DockPanel>
                 </StackPanel>
             </Grid>
@@ -144,17 +151,17 @@
                         <local:UserControl_Image x:Name="uct_image" />
                     </Border>
                 </Grid>
-                
+
             </Grid>
             <DataGrid x:Name="dg_detectResult" ItemsSource="{Binding }" Grid.Row="1" Grid.Column="2" Width="auto"
                       AutoGenerateColumns="False" CanUserAddRows="False">
-                <DataGrid.Columns>                    
+                <DataGrid.Columns>
                     <DataGridTextColumn Header="OK" Width="auto" Binding="{Binding OK}"/>
                     <DataGridTextColumn Header="NG" Width="auto" Binding="{Binding NG}"/>
                     <DataGridTextColumn Header="FPS" Width="auto" Binding="{Binding FPS}"/>
                 </DataGrid.Columns>
             </DataGrid>
-            
+
         </Grid>
     </Grid>
 </Window>
