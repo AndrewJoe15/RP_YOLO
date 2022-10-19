@@ -163,11 +163,14 @@
     <Compile Include="Test\Test.xaml.cs">
       <DependentUpon>Test.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\UserControl_DetectedImage.xaml.cs">
+    <Compile Include="View\UserCtrl\UserControl_DetectedImage.xaml.cs">
       <DependentUpon>UserControl_DetectedImage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\UserControl_Image.xaml.cs">
+    <Compile Include="View\UserCtrl\UserControl_Image.xaml.cs">
       <DependentUpon>UserControl_Image.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UserCtrl\UserControl_LoadingMask.xaml.cs">
+      <DependentUpon>UserControl_LoadingMask.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Window_CameraStreamDetect.xaml.cs">
       <DependentUpon>Window_CameraStreamDetect.xaml</DependentUpon>
@@ -175,7 +178,7 @@
     <Compile Include="View\Window_SingleImageDetect.xaml.cs">
       <DependentUpon>Window_SingleImageDetect.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\UserControl_OriginImage.xaml.cs">
+    <Compile Include="View\UserCtrl\UserControl_OriginImage.xaml.cs">
       <DependentUpon>UserControl_OriginImage.xaml</DependentUpon>
     </Compile>
     <Compile Include="YOLO\Models\YoloV5SolderModel.cs" />
@@ -185,11 +188,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\UserControl_DetectedImage.xaml">
+    <Page Include="View\UserCtrl\UserControl_DetectedImage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\UserControl_Image.xaml">
+    <Page Include="View\UserCtrl\UserControl_Image.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UserCtrl\UserControl_LoadingMask.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -213,7 +220,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\UserControl_OriginImage.xaml">
+    <Page Include="View\UserCtrl\UserControl_OriginImage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

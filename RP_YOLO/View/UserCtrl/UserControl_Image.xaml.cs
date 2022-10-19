@@ -16,7 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace RP_YOLO.View
+namespace RP_YOLO.View.UserCtrl
 {
     /// <summary>
     /// UserControl_Image.xaml 的交互逻辑

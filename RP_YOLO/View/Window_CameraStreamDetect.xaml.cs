@@ -12,6 +12,8 @@ using System.Threading;
 using RP_YOLO.Model;
 using System.Drawing.Imaging;
 using RP_YOLO.YOLO;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace RP_YOLO.View
 {
@@ -54,6 +56,9 @@ namespace RP_YOLO.View
 
             // 添加事件
             this.Closing += Window_CameraStreamDetect_Closing;
+
+            // loadingMask
+            bd_loadingMask.Visibility = Visibility.Collapsed;
         }
 
         private void Window_CameraStreamDetect_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -79,7 +84,7 @@ namespace RP_YOLO.View
             }
         }
 
-        private void btn_browse_modelFile_Click(object sender, RoutedEventArgs e)
+        private async void btn_browse_modelFile_Click_Async(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog { Filter = "onnx files(*.onnx)|*.onnx" };
             openFileDialog.Title = "请选择模型onnx文件";
@@ -87,12 +92,23 @@ namespace RP_YOLO.View
             DialogResult result = openFileDialog.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)
             {
+                // 显示正在加载画面
+                bd_loadingMask.Visibility = Visibility.Visible;
+
                 string onnxPath = tbx_modelFile.Text = openFileDialog.FileName;
-                yolov5 = new YOLOV5<YoloV5SolderModel>(onnxPath);
+                // 加载模型
+                if (await Task.Run(() => LoadModel(onnxPath)))
+                {
+                    bd_loadingMask.Visibility = Visibility.Collapsed;
+                }
             }
         }
 
-
+        private bool LoadModel(string onnxPath)
+        {
+            yolov5 = new YOLOV5<YoloV5SolderModel>(onnxPath);
+            return yolov5 != null;
+        }
 
         private void btn_run_Click(object sender, RoutedEventArgs e)
         {
@@ -189,7 +205,7 @@ namespace RP_YOLO.View
                 cbb_cameraList.SelectedIndex = 0;
             }
         }
-        private void btn_connectCamera_Click(object sender, RoutedEventArgs e)
+        private async void btn_connectCameraAsync_Click(object sender, RoutedEventArgs e)
         {
             if (m_stDeviceList.nDeviceNum == 0 || cbb_cameraList.SelectedIndex == -1)
             {
@@ -197,24 +213,45 @@ namespace RP_YOLO.View
                 return;
             }
 
+            // 显示正在加载画面
+            bd_loadingMask.Visibility = Visibility.Visible;
+
+            // 连接相机
             // ch:获取选择的设备信息 | en:Get selected device information
-            MyCamera.MV_CC_DEVICE_INFO device =
-                (MyCamera.MV_CC_DEVICE_INFO)Marshal.PtrToStructure(m_stDeviceList.pDeviceInfo[cbb_cameraList.SelectedIndex], typeof(MyCamera.MV_CC_DEVICE_INFO));
+            MyCamera.MV_CC_DEVICE_INFO device = (MyCamera.MV_CC_DEVICE_INFO)Marshal.PtrToStructure(
+                m_stDeviceList.pDeviceInfo[cbb_cameraList.SelectedIndex], typeof(MyCamera.MV_CC_DEVICE_INFO));
 
-            // ch:打开设备 | en:Open device
-            if (null == m_MyCamera)
+            bool connected = await Task.Run(() => OpenCamera(device));
+
+            if (connected)
             {
-                m_MyCamera = new MyCamera();
-                if (null == m_MyCamera)
-                {
-                    return;
-                }
-            }
+                // 设置控件
+                btn_connectCamera.IsEnabled = false;
+                btn_disconnCamera.IsEnabled = true;
+                btn_grabImage.IsEnabled = true;
+                btn_stopGrabbing.IsEnabled = false;
+                // - 触发模式
+                GetTriggerMode();
+                // - 获取相机参数
+                txb_exposure.Text = GetCameraParamValue_Float("ExposureTime");
+                txb_gain.Text = GetCameraParamValue_Float("Gain");
+                txb_frameRate.Text = GetCameraParamValue_Float("ResultingFrameRate");
+                // - 获取像素格式
+                GetPixelFormats();
 
+                // loadingMask
+                bd_loadingMask.Visibility = Visibility.Collapsed;
+
+            }
+        }
+
+        private bool OpenCamera(MyCamera.MV_CC_DEVICE_INFO device)
+        {
+            // ch:打开设备 | en:Open device
             int nRet = m_MyCamera.MV_CC_CreateDevice_NET(ref device);
             if (MyCamera.MV_OK != nRet)
             {
-                return;
+                return false;
             }
 
             nRet = m_MyCamera.MV_CC_OpenDevice_NET();
@@ -222,7 +259,7 @@ namespace RP_YOLO.View
             {
                 m_MyCamera.MV_CC_DestroyDevice_NET();
                 ShowErrorMsg("Device open fail!", nRet);
-                return;
+                return false;
             }
 
             // ch:探测网络最佳包大小(只对GigE相机有效) | en:Detection network optimal package size(It only works for the GigE camera)
@@ -247,19 +284,7 @@ namespace RP_YOLO.View
             m_MyCamera.MV_CC_SetEnumValue_NET("AcquisitionMode", (uint)MyCamera.MV_CAM_ACQUISITION_MODE.MV_ACQ_MODE_CONTINUOUS);
             m_MyCamera.MV_CC_SetEnumValue_NET("TriggerMode", (uint)MyCamera.MV_CAM_TRIGGER_MODE.MV_TRIGGER_MODE_OFF);
 
-            // 设置控件
-            btn_connectCamera.IsEnabled = false;
-            btn_disconnCamera.IsEnabled = true;
-            btn_grabImage.IsEnabled = true;
-            btn_stopGrabbing.IsEnabled = false;
-            // - 触发模式
-            GetTriggerMode();
-            // - 获取相机参数
-            txb_exposure.Text = GetCameraParamValue_Float("ExposureTime");
-            txb_gain.Text = GetCameraParamValue_Float("Gain");
-            txb_frameRate.Text = GetCameraParamValue_Float("ResultingFrameRate");
-            // - 获取像素格式
-            GetPixelFormats();
+            return true;
         }
 
         private void GetPixelFormats()
@@ -270,8 +295,8 @@ namespace RP_YOLO.View
             {
                 // 获取所有支持的像素格式
                 uint[] results = stParam.nSupportValue;
-                
-                for (int i=0; i<stParam.nSupportedNum; i++ )
+
+                for (int i = 0; i < stParam.nSupportedNum; i++)
                     cbb_pixelFormat.Items.Add((MyCamera.MvGvspPixelType)results[i]);
             }
             // 设置当前选择的像素格式
@@ -566,7 +591,7 @@ namespace RP_YOLO.View
         private void lsb_triggerMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             btn_softTrigger.IsEnabled = false;
-            
+
             // cbb_triggerMode.Items
             // - 0 连续
             // - 1 软触发

@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:RP_YOLO.View"
+      xmlns:userCtrl="clr-namespace:RP_YOLO.View.UserCtrl"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d" 
       d:DesignHeight="720" d:DesignWidth="1080"
@@ -66,7 +67,7 @@
                         x:Name="btn_searchCamera" Content="查找相机" Click="btn_searchCamera_Click"/>
                     <ComboBox Grid.Column="1" Grid.Row="1" x:Name="cbb_cameraList" SelectionChanged="cbb_cameraList_SelectionChanged" />
                     <Button Grid.Row="2" Grid.Column="0" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
-                        x:Name="btn_connectCamera" Content="连接" Click="btn_connectCamera_Click"/>
+                        x:Name="btn_connectCamera" Content="连接" Click="btn_connectCameraAsync_Click"/>
                     <Button Grid.Row="2" Grid.Column="1" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
                         x:Name="btn_disconnCamera" Content="断开" Click="btn_disconnCamera_Click"/>
                 </Grid>
@@ -134,7 +135,7 @@
                     <Label Grid.Column="0" Content="模型文件" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <TextBox Grid.Column="1" x:Name="tbx_modelFile" VerticalAlignment="Center" IsReadOnly="True"/>
                     <Button Grid.Column="2" x:Name="btn_browse_modelFile" Margin="5,3,5,3" Style="{DynamicResource MaterialDesignRaisedLightButton}" 
-                            Content="浏览" Click="btn_browse_modelFile_Click"/>
+                            Content="浏览" Click="btn_browse_modelFile_Click_Async"/>
                     <Button Grid.Column="3" x:Name="btn_run" Content="运行" Grid.Row="2" Width="60" Style="{DynamicResource MaterialDesignRaisedDarkButton}"
                         Click="btn_run_Click"/>
                 </Grid>
@@ -148,7 +149,7 @@
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Text="显示"/>
                     <Border Grid.Row="1" Grid.Column="0" Padding="4" Margin="4" Background="White" BorderBrush="#22000000" BorderThickness="1">
-                        <local:UserControl_Image x:Name="uct_image" />
+                        <userCtrl:UserControl_Image x:Name="uct_image" />
                     </Border>
                 </Grid>
 
@@ -163,5 +164,10 @@
             </DataGrid>
 
         </Grid>
+        <Border x:Name="bd_loadingMask" Visibility="Collapsed" Grid.RowSpan="10" Grid.ColumnSpan="10"
+            HorizontalAlignment="Stretch" Background="Gray" Opacity="0.3" IsEnabled="False"
+            VerticalAlignment="Stretch">
+            <userCtrl:UserControl_LoadingMask/>
+        </Border>
     </Grid>
 </Window>
