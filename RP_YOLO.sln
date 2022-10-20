@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.32802.440
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RP_YOLO", "RP_YOLO\RP_YOLO.csproj", "{0330237F-FDC8-4778-8813-D643B68BC5F8}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yolov5Net.Scorer", "..\Yolov5Net-Faster\src\Yolov5Net.Scorer\Yolov5Net.Scorer.csproj", "{DEC036E2-7705-4D9C-A6AC-0843804EE014}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{0330237F-FDC8-4778-8813-D643B68BC5F8}.Release|x64.Build.0 = Release|x64
 		{0330237F-FDC8-4778-8813-D643B68BC5F8}.Release|x86.ActiveCfg = Release|x86
 		{0330237F-FDC8-4778-8813-D643B68BC5F8}.Release|x86.Build.0 = Release|x86
+		{DEC036E2-7705-4D9C-A6AC-0843804EE014}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEC036E2-7705-4D9C-A6AC-0843804EE014}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEC036E2-7705-4D9C-A6AC-0843804EE014}.Debug|x64.ActiveCfg = Debug|x64
+		{DEC036E2-7705-4D9C-A6AC-0843804EE014}.Debug|x64.Build.0 = Debug|x64
+		{DEC036E2-7705-4D9C-A6AC-0843804EE014}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DEC036E2-7705-4D9C-A6AC-0843804EE014}.Debug|x86.Build.0 = Debug|Any CPU
+		{DEC036E2-7705-4D9C-A6AC-0843804EE014}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEC036E2-7705-4D9C-A6AC-0843804EE014}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEC036E2-7705-4D9C-A6AC-0843804EE014}.Release|x64.ActiveCfg = Release|x64
+		{DEC036E2-7705-4D9C-A6AC-0843804EE014}.Release|x64.Build.0 = Release|x64
+		{DEC036E2-7705-4D9C-A6AC-0843804EE014}.Release|x86.ActiveCfg = Release|Any CPU
+		{DEC036E2-7705-4D9C-A6AC-0843804EE014}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

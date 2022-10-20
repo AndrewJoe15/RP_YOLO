@@ -150,9 +150,6 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Yolov5NetFaster.Scorer">
-      <HintPath>..\dll\Yolov5NetFaster.Scorer.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -181,6 +178,8 @@
     <Compile Include="View\UserCtrl\UserControl_OriginImage.xaml.cs">
       <DependentUpon>UserControl_OriginImage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="YOLO\Models\YoloV5OkNgModel.cs" />
+    <Compile Include="YOLO\Models\YoloV5FestoModel.cs" />
     <Compile Include="YOLO\Models\YoloV5SolderModel.cs" />
     <Compile Include="YOLO\Models\YoloV5AmpouleModel.cs" />
     <Compile Include="YOLO\YOLOV5.cs" />
@@ -249,6 +248,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="YOLO\Weights\yolov5_ampoule.onnx" />
+    <None Include="YOLO\Weights\yolov5_festo.onnx" />
     <None Include="YOLO\Weights\yolov5_solder.onnx" />
   </ItemGroup>
   <ItemGroup>
@@ -256,6 +256,12 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Yolov5Net-Faster\src\Yolov5Net.Scorer\Yolov5Net.Scorer.csproj">
+      <Project>{dec036e2-7705-4d9c-a6ac-0843804ee014}</Project>
+      <Name>Yolov5Net.Scorer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.4.6.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.4.6.0\build\MaterialDesignThemes.targets')" />

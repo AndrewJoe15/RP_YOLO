@@ -38,7 +38,7 @@ namespace RP_YOLO.View
         // ch:用于从驱动获取图像的缓存 | en:Buffer for getting image from driver
         private uint m_nBufSizeForDriver = 0;
 
-        YOLOV5<YoloV5SolderModel> yolov5;
+        YOLOV5<YoloV5FestoModel> yolov5;
         private bool m_isRunning = false; //运行flag
 
         public Window_CameraStreamDetect()
@@ -106,7 +106,7 @@ namespace RP_YOLO.View
 
         private bool LoadModel(string onnxPath)
         {
-            yolov5 = new YOLOV5<YoloV5SolderModel>(onnxPath);
+            yolov5 = new YOLOV5<YoloV5FestoModel>(onnxPath);
             return yolov5 != null;
         }
 
