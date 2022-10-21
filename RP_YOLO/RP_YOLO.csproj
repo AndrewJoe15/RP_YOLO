@@ -247,9 +247,15 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="YOLO\Weights\yolov5_ampoule.onnx" />
-    <None Include="YOLO\Weights\yolov5_festo.onnx" />
-    <None Include="YOLO\Weights\yolov5_solder.onnx" />
+    <EmbeddedResource Include="YOLO\Weights\yolov5_ampoule.onnx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="YOLO\Weights\yolov5_festo.onnx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="YOLO\Weights\yolov5_solder.onnx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -258,8 +264,8 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Yolov5Net-Faster\src\Yolov5Net.Scorer\Yolov5Net.Scorer.csproj">
-      <Project>{dec036e2-7705-4d9c-a6ac-0843804ee014}</Project>
+    <ProjectReference Include="..\..\RP-yolov5-net\src\Yolov5Net.Scorer\Yolov5Net.Scorer.csproj">
+      <Project>{99d7a938-7f66-4c45-964a-966b9d55b506}</Project>
       <Name>Yolov5Net.Scorer</Name>
     </ProjectReference>
   </ItemGroup>

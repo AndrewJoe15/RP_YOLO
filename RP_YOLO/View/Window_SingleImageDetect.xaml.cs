@@ -35,7 +35,7 @@ namespace RP_YOLO.View
         private string _sourceFolderName;//源文件夹
         private string _originImagePath { get => _sourceFolderName + "\\" + lsb_sourceFiles.SelectedItem; }//原始图片路径
         private bool _isRunning = false; //运行flag
-        private YOLOV5<YoloV5SolderModel> yolov5;
+        private YOLOV5<YoloV5FestoModel> yolov5;
 
         public Window_SingleImageDetect()
         {
@@ -80,7 +80,7 @@ namespace RP_YOLO.View
             if (result == System.Windows.Forms.DialogResult.OK)
             {
                 string onnxPath = tbx_modelFile.Text = openFileDialog.FileName;
-                yolov5 = new YOLOV5<YoloV5SolderModel>(onnxPath);
+                yolov5 = new YOLOV5<YoloV5FestoModel>(onnxPath);
             }
         }
 

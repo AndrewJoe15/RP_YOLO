@@ -95,10 +95,13 @@ namespace RP_YOLO.View
                 // 显示正在加载画面
                 bd_loadingMask.Visibility = Visibility.Visible;
 
-                string onnxPath = tbx_modelFile.Text = openFileDialog.FileName;
+                string onnxPath = txb_modelFile.Text = openFileDialog.FileName;
+                // 光标定位到最后
+                txb_modelFile.CaretIndex = txb_modelFile.Text.Length-1;
                 // 加载模型
                 if (await Task.Run(() => LoadModel(onnxPath)))
                 {
+                    // 加载完成，等待加载页面消失
                     bd_loadingMask.Visibility = Visibility.Collapsed;
                 }
             }
@@ -112,7 +115,7 @@ namespace RP_YOLO.View
 
         private void btn_run_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(tbx_modelFile.Text))
+            if (string.IsNullOrEmpty(txb_modelFile.Text))
             {
                 System.Windows.MessageBox.Show("请先选择onnx文件");
                 return;
