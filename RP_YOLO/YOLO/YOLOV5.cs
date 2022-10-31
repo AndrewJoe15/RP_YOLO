@@ -12,18 +12,18 @@ namespace RP_YOLO.YOLO
     /// <summary>
     /// YOLOV5 封装类
     /// </summary>
-    class YOLOV5<T> where T : YoloModel
+    internal class YOLOV5
     {
-        public YoloScorer<T> scorer;
-        private YoloScorer<T> m_scorer;
+        public YoloScorer scorer;
+        private YoloScorer m_scorer;
 
-        public YOLOV5(string onnxPath)
+        public YOLOV5(YoloModel yoloModel, string onnxPath)
         {
             //使用CUDA
             SessionOptions sessionOptions = new SessionOptions();
             sessionOptions.AppendExecutionProvider_CUDA();
             //加载模型文件
-            m_scorer = new YoloScorer<T>(onnxPath, sessionOptions);
+            m_scorer = new YoloScorer(yoloModel, onnxPath, sessionOptions);
         }
 
         /// <summary>

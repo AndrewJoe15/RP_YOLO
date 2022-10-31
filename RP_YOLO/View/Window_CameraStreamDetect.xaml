@@ -156,7 +156,7 @@
                     <StackPanel>
                         <DockPanel>
                             <Label Content="模板选择"/>
-                            <ComboBox x:Name="cbb_modelType" VerticalAlignment="Center" IsReadOnly="True" SelectionChanged="cbb_modelType_SelectionChanged_Async">
+                            <ComboBox x:Name="cbb_modelType" VerticalAlignment="Center" IsReadOnly="True" SelectionChanged="cbb_modelType_SelectionChanged">
                                 <ComboBoxItem Content="OKNG" x:Name="cbbi_modelType_OKNG"/>
                                 <ComboBoxItem Content="螺柱" x:Name="cbbi_modelType_bolt"/>
                                 <ComboBoxItem Content="阀杆" x:Name="cbbi_modelType_valveStem"/>

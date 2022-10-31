@@ -17,8 +17,6 @@ using RP_YOLO.YOLO;
 using RP_YOLO.YOLO.Models;
 using Yolov5Net.Scorer.Models.Abstract;
 using System.Windows.Forms;
-using TextBox = System.Windows.Controls.TextBox;
-using System.Windows.Data;
 
 namespace RP_YOLO.View
 {
@@ -48,8 +46,8 @@ namespace RP_YOLO.View
         private string m_onnxFile_solder = "yolov5_solder.onnx";
         private string m_onnxFile_festo = "yolov5_festo.onnx";
 
-        private YOLOV5<YoloV5OkNgModel> m_yolov5_okNg;
-        private YOLOV5<YoloV5SolderModel> m_yolov5_solder;
+        private YOLOV5 m_yolov5;
+        private YoloModel m_yolov5Model;
 
         private bool m_isRunning = false; //运行flag
 
@@ -98,6 +96,12 @@ namespace RP_YOLO.View
 
         private async void btn_browse_modelFile_Click_Async(object sender, RoutedEventArgs e)
         {
+            if (cbb_modelType.SelectedItem == null)
+            {
+                MessageBoxUtil.ShowTips("请先选择模板类型。");
+                return;
+            }
+
             OpenFileDialog openFileDialog = new OpenFileDialog { Filter = "onnx files(*.onnx)|*.onnx" };
             openFileDialog.Title = "请选择模型onnx文件";
 
@@ -110,28 +114,19 @@ namespace RP_YOLO.View
                 string onnxPath = txb_modelFile.Text = openFileDialog.FileName;
                 // 光标定位到最后
                 txb_modelFile.CaretIndex = txb_modelFile.Text.Length-1;
-                // 加载模型
-                if (await Task.Run(() => LoadModel(onnxPath)))
+                // 加载模型文件
+                if (await Task.Run(() => LoadModel(m_yolov5Model, onnxPath)))
                 {
                     // 加载完成，等待加载页面消失
                     bd_loadingMask.Visibility = Visibility.Collapsed;
-
-                    // 绑定
-                    // - 模型参数
-                    // - - 上下文
-                    sp_modelParam.DataContext = m_yolov5_okNg.scorer.model;
-                    // - - Confidence
-                    BindingUtil.BindData(txb_confidence, TextBox.TextProperty, nameof(m_yolov5_okNg.scorer.model.Confidence), BindingMode.TwoWay);
-                    BindingUtil.BindData(txb_mulConfidence, TextBox.TextProperty, nameof(m_yolov5_okNg.scorer.model.MulConfidence), BindingMode.TwoWay);
-                    BindingUtil.BindData(txb_overlap, TextBox.TextProperty, nameof(m_yolov5_okNg.scorer.model.Overlap), BindingMode.TwoWay);
                 }
             }
         }
 
-        private bool LoadModel(string onnxPath)
+        private bool LoadModel(YoloModel yoloModel,string onnxPath)
         {
-            m_yolov5_okNg = new YOLOV5<YoloV5OkNgModel>(onnxPath);
-            return m_yolov5_okNg != null;
+            m_yolov5 = new YOLOV5(yoloModel, onnxPath);
+            return m_yolov5 != null;
         }
 
         private void btn_run_Click(object sender, RoutedEventArgs e)
@@ -159,7 +154,7 @@ namespace RP_YOLO.View
         {
             try
             {
-                m_yolov5_okNg.ObjectDetect(bitmap, out DetectResult result);
+                m_yolov5.ObjectDetect(bitmap, out DetectResult result);
                 _ = Dispatcher.InvokeAsync(new Action(delegate
                   {
                       if (detectResults.Count == 0)
@@ -677,66 +672,30 @@ namespace RP_YOLO.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void cbb_modelType_SelectionChanged_Async(object sender, SelectionChangedEventArgs e)
+        private void cbb_modelType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string onnxPath = Environment.CurrentDirectory;
-
-            // 显示正在加载画面
-            bd_loadingMask.Visibility = Visibility.Visible;
-
             // OKNG 模型
             if (cbbi_modelType_OKNG.IsSelected)
             {
-                onnxPath = await LoadOnnxFile(onnxPath);
+                m_yolov5Model = new YoloV5OkNgModel();
             }
             // 螺柱 模型
             else if (cbbi_modelType_bolt.IsSelected)
             {
-                onnxPath += m_onnxDir + m_onnxFile_solder;
-                // 加载模型
-                if (await Task.Run(() => LoadModel(onnxPath)))
-                {
-                    // 加载完成，等待加载页面消失
-                    bd_loadingMask.Visibility = Visibility.Collapsed;
-
-                    // 绑定上下文
-                    sp_modelParam.DataContext = m_yolov5_solder.scorer.model;
-                }
-            }
-            else if (cbbi_modelType_valveStem.IsSelected)
-            {
-
+                m_yolov5Model = new YoloV5SolderModel();
             }
 
-            txb_modelFile.Text = onnxPath;
-            // 光标定位到最后
-            txb_modelFile.SelectionStart = txb_modelFile.Text.Length - 1;
             // 绑定
+            // 绑定上下文
+            sp_modelParam.DataContext = m_yolov5Model;
             /*BindingUtil.BindData(txb_confidence, TextBox.TextProperty, "Confidence", BindingMode.OneWayToSource);
             BindingUtil.BindData(txb_mulConfidence, TextBox.TextProperty, "MulConfidence", BindingMode.OneWayToSource);
             BindingUtil.BindData(txb_overlap, TextBox.TextProperty, "Overlap", BindingMode.TwoWay);*/
         }
 
-        private async Task<string> LoadOnnxFile(string onnxPath)
-        {
-            // onnx路径
-            onnxPath += m_onnxDir + m_onnxFile_ampoule;
-            // 加载模型
-            if (await Task.Run(() => LoadModel(onnxPath)))
-            {
-                // 加载完成，等待加载页面消失
-                bd_loadingMask.Visibility = Visibility.Collapsed;
-
-                // 绑定上下文
-                sp_modelParam.DataContext = m_yolov5_okNg.scorer.model;
-            }
-
-            return onnxPath;
-        }
-
         private void txb_mulConfidence_TextChanged(object sender, TextChangedEventArgs e)
         {
-            MessageBoxUtil.ShowTips(m_yolov5_okNg.scorer.model.MulConfidence.ToString());
+            
         }
     }
 }
