@@ -2,18 +2,23 @@
 using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 
-using RP_YOLO.YOLO.Models;
 using System.Collections.ObjectModel;
 using MvCamCtrl.NET;
 using System.Runtime.InteropServices;
 using System.Threading;
-using RP_YOLO.Model;
 using System.Drawing.Imaging;
-using RP_YOLO.YOLO;
 using System.ComponentModel;
 using System.Threading.Tasks;
+
+using RPSoft_Core.Utils;
+using RP_YOLO.Model;
+using RP_YOLO.YOLO;
+using RP_YOLO.YOLO.Models;
+using Yolov5Net.Scorer.Models.Abstract;
+using System.Windows.Forms;
+using TextBox = System.Windows.Controls.TextBox;
+using System.Windows.Data;
 
 namespace RP_YOLO.View
 {
@@ -38,7 +43,14 @@ namespace RP_YOLO.View
         // ch:用于从驱动获取图像的缓存 | en:Buffer for getting image from driver
         private uint m_nBufSizeForDriver = 0;
 
-        YOLOV5<YoloV5FestoModel> yolov5;
+        private string m_onnxDir = @"\YOLO\Weights\";
+        private string m_onnxFile_ampoule = "yolov5_ampoule.onnx";
+        private string m_onnxFile_solder = "yolov5_solder.onnx";
+        private string m_onnxFile_festo = "yolov5_festo.onnx";
+
+        private YOLOV5<YoloV5OkNgModel> m_yolov5_okNg;
+        private YOLOV5<YoloV5SolderModel> m_yolov5_solder;
+
         private bool m_isRunning = false; //运行flag
 
         public Window_CameraStreamDetect()
@@ -55,10 +67,10 @@ namespace RP_YOLO.View
             btn_stopGrabbing.IsEnabled = false;
 
             // 添加事件
-            this.Closing += Window_CameraStreamDetect_Closing;
+            Closing += Window_CameraStreamDetect_Closing;
 
             // loadingMask
-            bd_loadingMask.Visibility = Visibility.Collapsed;
+            bd_loadingMask.Visibility = Visibility.Collapsed;            
         }
 
         private void Window_CameraStreamDetect_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -103,14 +115,23 @@ namespace RP_YOLO.View
                 {
                     // 加载完成，等待加载页面消失
                     bd_loadingMask.Visibility = Visibility.Collapsed;
+
+                    // 绑定
+                    // - 模型参数
+                    // - - 上下文
+                    sp_modelParam.DataContext = m_yolov5_okNg.scorer.model;
+                    // - - Confidence
+                    BindingUtil.BindData(txb_confidence, TextBox.TextProperty, nameof(m_yolov5_okNg.scorer.model.Confidence), BindingMode.TwoWay);
+                    BindingUtil.BindData(txb_mulConfidence, TextBox.TextProperty, nameof(m_yolov5_okNg.scorer.model.MulConfidence), BindingMode.TwoWay);
+                    BindingUtil.BindData(txb_overlap, TextBox.TextProperty, nameof(m_yolov5_okNg.scorer.model.Overlap), BindingMode.TwoWay);
                 }
             }
         }
 
         private bool LoadModel(string onnxPath)
         {
-            yolov5 = new YOLOV5<YoloV5FestoModel>(onnxPath);
-            return yolov5 != null;
+            m_yolov5_okNg = new YOLOV5<YoloV5OkNgModel>(onnxPath);
+            return m_yolov5_okNg != null;
         }
 
         private void btn_run_Click(object sender, RoutedEventArgs e)
@@ -138,7 +159,7 @@ namespace RP_YOLO.View
         {
             try
             {
-                yolov5.ObjectDetect(bitmap, out DetectResult result);
+                m_yolov5_okNg.ObjectDetect(bitmap, out DetectResult result);
                 _ = Dispatcher.InvokeAsync(new Action(delegate
                   {
                       if (detectResults.Count == 0)
@@ -649,6 +670,73 @@ namespace RP_YOLO.View
             {
                 ShowErrorMsg("Fail to change pixel format!", nRet);
             }
+        }
+
+        /// <summary>
+        ///  模型模板切换
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void cbb_modelType_SelectionChanged_Async(object sender, SelectionChangedEventArgs e)
+        {
+            string onnxPath = Environment.CurrentDirectory;
+
+            // 显示正在加载画面
+            bd_loadingMask.Visibility = Visibility.Visible;
+
+            // OKNG 模型
+            if (cbbi_modelType_OKNG.IsSelected)
+            {
+                onnxPath = await LoadOnnxFile(onnxPath);
+            }
+            // 螺柱 模型
+            else if (cbbi_modelType_bolt.IsSelected)
+            {
+                onnxPath += m_onnxDir + m_onnxFile_solder;
+                // 加载模型
+                if (await Task.Run(() => LoadModel(onnxPath)))
+                {
+                    // 加载完成，等待加载页面消失
+                    bd_loadingMask.Visibility = Visibility.Collapsed;
+
+                    // 绑定上下文
+                    sp_modelParam.DataContext = m_yolov5_solder.scorer.model;
+                }
+            }
+            else if (cbbi_modelType_valveStem.IsSelected)
+            {
+
+            }
+
+            txb_modelFile.Text = onnxPath;
+            // 光标定位到最后
+            txb_modelFile.SelectionStart = txb_modelFile.Text.Length - 1;
+            // 绑定
+            /*BindingUtil.BindData(txb_confidence, TextBox.TextProperty, "Confidence", BindingMode.OneWayToSource);
+            BindingUtil.BindData(txb_mulConfidence, TextBox.TextProperty, "MulConfidence", BindingMode.OneWayToSource);
+            BindingUtil.BindData(txb_overlap, TextBox.TextProperty, "Overlap", BindingMode.TwoWay);*/
+        }
+
+        private async Task<string> LoadOnnxFile(string onnxPath)
+        {
+            // onnx路径
+            onnxPath += m_onnxDir + m_onnxFile_ampoule;
+            // 加载模型
+            if (await Task.Run(() => LoadModel(onnxPath)))
+            {
+                // 加载完成，等待加载页面消失
+                bd_loadingMask.Visibility = Visibility.Collapsed;
+
+                // 绑定上下文
+                sp_modelParam.DataContext = m_yolov5_okNg.scorer.model;
+            }
+
+            return onnxPath;
+        }
+
+        private void txb_mulConfidence_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            MessageBoxUtil.ShowTips(m_yolov5_okNg.scorer.model.MulConfidence.ToString());
         }
     }
 }

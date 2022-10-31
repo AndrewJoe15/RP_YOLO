@@ -14,6 +14,7 @@ namespace RP_YOLO.YOLO
     /// </summary>
     class YOLOV5<T> where T : YoloModel
     {
+        public YoloScorer<T> scorer;
         private YoloScorer<T> m_scorer;
 
         public YOLOV5(string onnxPath)

@@ -53,88 +53,114 @@
                     </Style>
                 </TabControl.Resources>
                 <TabItem Header="相机">
-                    
-                <Grid Margin="10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Grid Grid.Row="0">
+
+                    <Grid Margin="10">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>
-                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Grid.Row="0" Content="初始化"/>
-                        <Button Grid.Column="0" Grid.Row="1" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
+                        <Grid Grid.Row="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Grid.Row="0" Content="初始化"/>
+                            <Button Grid.Column="0" Grid.Row="1" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
                         x:Name="btn_searchCamera" Content="查找相机" Click="btn_searchCamera_Click"/>
-                        <ComboBox Grid.Column="1" Grid.Row="1" x:Name="cbb_cameraList" SelectionChanged="cbb_cameraList_SelectionChanged" />
-                        <Button Grid.Row="2" Grid.Column="0" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
+                            <ComboBox Grid.Column="1" Grid.Row="1" x:Name="cbb_cameraList" SelectionChanged="cbb_cameraList_SelectionChanged" />
+                            <Button Grid.Row="2" Grid.Column="0" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
                         x:Name="btn_connectCamera" Content="连接" Click="btn_connectCameraAsync_Click"/>
-                        <Button Grid.Row="2" Grid.Column="1" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
+                            <Button Grid.Row="2" Grid.Column="1" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
                         x:Name="btn_disconnCamera" Content="断开" Click="btn_disconnCamera_Click"/>
-                    </Grid>
-                    <Grid Grid.Row="1">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="113"/>
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Grid.Row="0" Content="图像采集"/>
-                        <Label Grid.Row="1" Content="触发模式" Margin="15,1,10,1"/>
-                        <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbb_triggerMode" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="113"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Grid.Row="0" Content="图像采集"/>
+                            <Label Grid.Row="1" Content="触发模式" Margin="15,1,10,1"/>
+                            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbb_triggerMode" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                               SelectionChanged="lsb_triggerMode_SelectionChanged">
-                            <ComboBoxItem Content="连续"/>
-                            <ComboBoxItem Content="软触发"/>
-                            <ComboBoxItem Content="Line0"/>
-                        </ComboBox>
-                        <Button Grid.Row="2" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
+                                <ComboBoxItem Content="连续"/>
+                                <ComboBoxItem Content="软触发"/>
+                                <ComboBoxItem Content="Line0"/>
+                            </ComboBox>
+                            <Button Grid.Row="2" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
                         x:Name="btn_grabImage" Content="开始采集" Click="btn_grabImage_Click"/>
-                        <Button Grid.Row="2" Grid.Column="1" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
+                            <Button Grid.Row="2" Grid.Column="1" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
                         x:Name="btn_stopGrabbing" Content="停止采集" Click="btn_stopGrabbing_Click"/>
-                        <Button Grid.Row="3" Grid.Column="0" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
+                            <Button Grid.Row="3" Grid.Column="0" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
                         x:Name="btn_softTrigger" Content="软触发" Click="btn_softTrigger_Click"/>
-                    </Grid>
-                    <StackPanel Grid.Row="2">
-                        <Label Grid.Column="0" Grid.Row="0" Content="相机参数"/>
-                        <DockPanel>
-                            <Label Content="曝光" Margin="5,1,10,1"/>
-                            <TextBox x:Name="txb_exposure" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        </Grid>
+                        <StackPanel Grid.Row="2">
+                            <Label Grid.Column="0" Grid.Row="0" Content="相机参数"/>
+                            <DockPanel>
+                                <Label Content="曝光" Margin="5,1,10,1"/>
+                                <TextBox x:Name="txb_exposure" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                                  TextChanged="txb_exposure_TextChanged"/>
-                        </DockPanel>
-                        <DockPanel>
-                            <Label Content="增益" Margin="5,1,10,1"/>
-                            <TextBox x:Name="txb_gain" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                            </DockPanel>
+                            <DockPanel>
+                                <Label Content="增益" Margin="5,1,10,1"/>
+                                <TextBox x:Name="txb_gain" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                                  TextChanged="txb_gain_TextChanged"/>
-                        </DockPanel>
-                        <DockPanel>
-                            <Label Content="帧率" Margin="5,1,10,1"/>
-                            <TextBox x:Name="txb_frameRate" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" IsReadOnly="True"/>
-                        </DockPanel>
-                        <DockPanel>
-                            <Label Content="像素格式" Margin="5,1,10,1"/>
-                            <ComboBox x:Name="cbb_pixelFormat" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                            </DockPanel>
+                            <DockPanel>
+                                <Label Content="帧率" Margin="5,1,10,1"/>
+                                <TextBox x:Name="txb_frameRate" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" IsReadOnly="True"/>
+                            </DockPanel>
+                            <DockPanel>
+                                <Label Content="像素格式" Margin="5,1,10,1"/>
+                                <ComboBox x:Name="cbb_pixelFormat" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                                   SelectionChanged="cbb_pixelFormat_SelectionChanged"/>
-                        </DockPanel>
-                    </StackPanel>
-                </Grid>
+                            </DockPanel>
+                            <Label Grid.Column="0" Grid.Row="0" Content="ROI"/>
+                            <DockPanel>
+                                <Grid>
+                                    <Grid.Resources>
+                                        <Style TargetType="TextBox">
+                                            <Setter Property="Margin" Value="5,3,5,3"/>
+                                        </Style>
+                                    </Grid.Resources>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <TextBox x:Name="cbb_roi_x" Grid.Row="0" Grid.Column="0"/>
+                                    <TextBox x:Name="cbb_roi_y" Grid.Row="0" Grid.Column="1"/>
+                                    <TextBox x:Name="cbb_roi_w" Grid.Row="1" Grid.Column="0"/>
+                                    <TextBox x:Name="cbb_roi_h" Grid.Row="1" Grid.Column="1"/>
+                                </Grid>
+                            </DockPanel>
+                        </StackPanel>
+                    </Grid>
 
                 </TabItem>
                 <TabItem Header="模型">
                     <StackPanel>
                         <DockPanel>
-                            <Label Content="模板选择" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <ComboBox Grid.Column="1" x:Name="cbb_modelType" VerticalAlignment="Center" IsReadOnly="True"/>
+                            <Label Content="模板选择"/>
+                            <ComboBox x:Name="cbb_modelType" VerticalAlignment="Center" IsReadOnly="True" SelectionChanged="cbb_modelType_SelectionChanged_Async">
+                                <ComboBoxItem Content="OKNG" x:Name="cbbi_modelType_OKNG"/>
+                                <ComboBoxItem Content="螺柱" x:Name="cbbi_modelType_bolt"/>
+                                <ComboBoxItem Content="阀杆" x:Name="cbbi_modelType_valveStem"/>
+                            </ComboBox>
                         </DockPanel>
                         <DockPanel>
                             <Label Content="模型文件" VerticalAlignment="Center"/>
@@ -142,6 +168,39 @@
                                     Content="浏览" Click="btn_browse_modelFile_Click_Async"/>
                             <TextBox x:Name="txb_modelFile" VerticalAlignment="Center" Width="auto" IsReadOnly="True"/>
                         </DockPanel>
+                        <StackPanel x:Name="sp_modelParam">
+                            <Label Content="模板参数"/>
+                            <DockPanel>
+                                <Label Content="Confidence" Margin="5,1,10,1"/>
+                                <TextBox x:Name="txb_confidence" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                         Text="{Binding Path=Confidence, Mode=OneWayToSource}"/>
+                            </DockPanel>
+                            <DockPanel>
+                                <Label Content="MulConfidence" Margin="5,1,10,1"/>
+                                <TextBox x:Name="txb_mulConfidence" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                         Text="{Binding Path=MulConfidence}" TextChanged="txb_mulConfidence_TextChanged"/>
+                            </DockPanel>
+                            <DockPanel>
+                                <Label Content="Overlap" Margin="5,1,10,1"/>
+                                <TextBox x:Name="txb_overlap" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
+                                         Text="{Binding Path=Overlap}"/>
+                            </DockPanel>
+                            <DockPanel>
+                                <Label Content="最大检测数" Margin="5,1,10,1"/>
+                                <TextBox x:Name="txb_maxDetections" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
+                                         Text="{Binding Path=MaxDetections}"/>
+                            </DockPanel>
+                            <StackPanel>
+                                <Label Content="标签"/>
+                                <DataGrid x:Name="dg_labels" AutoGenerateColumns="False" CanUserAddRows="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="ID" Width="auto" Binding="{Binding Id}"/>
+                                        <DataGridTextColumn Header="名称" Width="auto" Binding="{Binding Name}"/>
+                                        <DataGridTextColumn Header="颜色" Width="auto" Binding="{Binding Color}"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </StackPanel>
+                        </StackPanel>
                         <Button Grid.Column="3" x:Name="btn_run" Content="运行" Grid.Row="2" Width="auto" Margin="5,3,5,3" Style="{DynamicResource MaterialDesignRaisedDarkButton}"
                         Click="btn_run_Click"/>
                     </StackPanel>
@@ -159,7 +218,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    
+
                 </Grid>
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
@@ -176,7 +235,7 @@
                 </Grid>
 
             </Grid>
-            <DataGrid x:Name="dg_detectResult" ItemsSource="{Binding }" Grid.Row="1" Grid.Column="2" Width="auto"
+            <DataGrid x:Name="dg_detectResult" ItemsSource="{Binding}" Grid.Row="1" Grid.Column="2" Width="auto"
                       AutoGenerateColumns="False" CanUserAddRows="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="OK" Width="auto" Binding="{Binding OK}"/>
