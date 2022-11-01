@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Yolov5Net.Scorer;
-using Yolov5Net.Scorer.Models.Abstract;
 
 namespace RP_YOLO.Model
 {

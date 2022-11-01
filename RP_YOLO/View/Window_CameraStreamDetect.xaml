@@ -67,8 +67,8 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0" Grid.Row="0" Content="初始化"/>
                             <Button Grid.Column="0" Grid.Row="1" Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="5,3,5,3"
@@ -173,22 +173,22 @@
                             <DockPanel>
                                 <Label Content="Confidence" Margin="5,1,10,1"/>
                                 <TextBox x:Name="txb_confidence" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                                         Text="{Binding Path=Confidence, Mode=OneWayToSource}"/>
+                                         Text="{Binding Path=Confidence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                             </DockPanel>
                             <DockPanel>
                                 <Label Content="MulConfidence" Margin="5,1,10,1"/>
                                 <TextBox x:Name="txb_mulConfidence" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                                         Text="{Binding Path=MulConfidence}" TextChanged="txb_mulConfidence_TextChanged"/>
+                                         Text="{Binding Path=MulConfidence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                             </DockPanel>
                             <DockPanel>
                                 <Label Content="Overlap" Margin="5,1,10,1"/>
                                 <TextBox x:Name="txb_overlap" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
-                                         Text="{Binding Path=Overlap}"/>
+                                         Text="{Binding Path=Overlap, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                             </DockPanel>
                             <DockPanel>
                                 <Label Content="最大检测数" Margin="5,1,10,1"/>
                                 <TextBox x:Name="txb_maxDetections" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
-                                         Text="{Binding Path=MaxDetections}"/>
+                                         Text="{Binding Path=MaxDetections, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                             </DockPanel>
                             <StackPanel>
                                 <Label Content="标签"/>

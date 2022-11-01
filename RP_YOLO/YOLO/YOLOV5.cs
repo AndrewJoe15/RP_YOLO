@@ -5,7 +5,6 @@ using System.Drawing;
 using Microsoft.ML.OnnxRuntime;
 using RP_YOLO.Model;
 using Yolov5Net.Scorer;
-using Yolov5Net.Scorer.Models.Abstract;
 
 namespace RP_YOLO.YOLO
 {
@@ -14,8 +13,7 @@ namespace RP_YOLO.YOLO
     /// </summary>
     internal class YOLOV5
     {
-        public YoloScorer scorer;
-        private YoloScorer m_scorer;
+        public YoloScorer scorer { get; set; }
 
         public YOLOV5(YoloModel yoloModel, string onnxPath)
         {
@@ -23,7 +21,7 @@ namespace RP_YOLO.YOLO
             SessionOptions sessionOptions = new SessionOptions();
             sessionOptions.AppendExecutionProvider_CUDA();
             //加载模型文件
-            m_scorer = new YoloScorer(yoloModel, onnxPath, sessionOptions);
+            scorer = new YoloScorer(yoloModel, onnxPath, sessionOptions);
         }
 
         /// <summary>
@@ -38,7 +36,7 @@ namespace RP_YOLO.YOLO
 
             Stopwatch stopwatch = new Stopwatch();//计时器用来计算目标检测算法执行时间
             stopwatch.Start();
-            List<YoloPrediction> predictions = m_scorer.Predict(image);
+            List<YoloPrediction> predictions = scorer.Predict(image);
             stopwatch.Stop();
             result.during = stopwatch.ElapsedMilliseconds;
 
