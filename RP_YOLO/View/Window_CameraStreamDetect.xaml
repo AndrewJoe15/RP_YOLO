@@ -159,7 +159,6 @@
                             <ComboBox x:Name="cbb_modelType" VerticalAlignment="Center" IsReadOnly="True" SelectionChanged="cbb_modelType_SelectionChanged">
                                 <ComboBoxItem Content="OKNG" x:Name="cbbi_modelType_OKNG"/>
                                 <ComboBoxItem Content="螺柱" x:Name="cbbi_modelType_bolt"/>
-                                <ComboBoxItem Content="阀杆" x:Name="cbbi_modelType_valveStem"/>
                             </ComboBox>
                         </DockPanel>
                         <DockPanel>
@@ -192,7 +191,7 @@
                             </DockPanel>
                             <StackPanel>
                                 <Label Content="标签"/>
-                                <DataGrid x:Name="dg_labels" AutoGenerateColumns="False" CanUserAddRows="False">
+                                <DataGrid x:Name="dg_labels" ItemsSource="{Binding}" IsReadOnly="True"  AutoGenerateColumns="False" CanUserAddRows="False">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="ID" Width="auto" Binding="{Binding Id}"/>
                                         <DataGridTextColumn Header="名称" Width="auto" Binding="{Binding Name}"/>
@@ -236,7 +235,7 @@
 
             </Grid>
             <DataGrid x:Name="dg_detectResult" ItemsSource="{Binding}" Grid.Row="1" Grid.Column="2" Width="auto"
-                      AutoGenerateColumns="False" CanUserAddRows="False">
+                      AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="OK" Width="auto" Binding="{Binding OK}"/>
                     <DataGridTextColumn Header="NG" Width="auto" Binding="{Binding NG}"/>

@@ -45,6 +45,7 @@ namespace RP_YOLO.View
 
         private YOLOV5 m_yolov5;
         private YoloModel m_yolov5Model;
+        private ObservableCollection<YoloLabel> m_yolov5ModelLabels;
 
         private bool m_isRunning = false; //运行flag
 
@@ -681,7 +682,8 @@ namespace RP_YOLO.View
 
             // 绑定上下文
             sp_modelParam.DataContext = m_yolov5Model;
-
+            m_yolov5ModelLabels = new ObservableCollection<YoloLabel>(m_yolov5Model.Labels);
+            dg_labels.DataContext = m_yolov5ModelLabels;
 
             // 绑定
             /*BindingUtil.BindData(txb_confidence, TextBox.TextProperty, "Confidence", BindingMode.OneWayToSource);
