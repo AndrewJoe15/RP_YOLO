@@ -112,15 +112,17 @@ namespace RP_YOLO.View
                     // 加载完成，等待加载页面消失
                     bd_loadingMask.Visibility = Visibility.Collapsed;
 
-                    // 绑定数据上下文
-                    sp_modelParam.DataContext = m_yolov5.scorer.model;
+                    // 绑定上下文
+                    sp_modelParam.DataContext = m_yolov5Model = m_yolov5?.scorer?.model;
+                    m_yolov5ModelLabels = new ObservableCollection<YoloLabel>(m_yolov5?.scorer?.model.Labels);
+                    dg_labels.DataContext = m_yolov5ModelLabels;
                 }
             }
         }
 
         private bool LoadModel(string onnxPath)
         {
-            m_yolov5 = new YOLOV5(m_yolov5Model, onnxPath);
+            m_yolov5 = new YOLOV5(onnxPath);
             return m_yolov5 != null;
         }
 
@@ -669,20 +671,27 @@ namespace RP_YOLO.View
         /// <param name="e"></param>
         private void cbb_modelType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // OKNG 模型
-            if (cbbi_modelType_OKNG.IsSelected)
+            if (m_yolov5 == null || m_yolov5Model == null)
+                return;
+            // 默认模型参数
+            if (cbbi_modelType_default.IsSelected)
             {
-                m_yolov5Model = new YoloV5OkNgModel();
+                m_yolov5.scorer.model = m_yolov5Model;
+            }
+            // OKNG 模型
+            else if (cbbi_modelType_OKNG.IsSelected)
+            {
+                m_yolov5.scorer.model = new YoloV5OkNgModel();
             }
             // 螺柱 模型
             else if (cbbi_modelType_bolt.IsSelected)
             {
-                m_yolov5Model = new YoloV5SolderModel();
+                m_yolov5.scorer.model = new YoloV5SolderModel();
             }
 
             // 绑定上下文
-            sp_modelParam.DataContext = m_yolov5Model;
-            m_yolov5ModelLabels = new ObservableCollection<YoloLabel>(m_yolov5Model.Labels);
+            sp_modelParam.DataContext = m_yolov5?.scorer?.model;
+            m_yolov5ModelLabels = new ObservableCollection<YoloLabel>(m_yolov5?.scorer?.model.Labels);
             dg_labels.DataContext = m_yolov5ModelLabels;
 
             // 绑定
@@ -692,6 +701,16 @@ namespace RP_YOLO.View
         }
 
         private void txb_mulConfidence_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void btn_modelParam_load_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btn_modelParam_save_Click(object sender, RoutedEventArgs e)
         {
 
         }

@@ -184,10 +184,9 @@
     <Compile Include="View\UserCtrl\UserControl_OriginImage.xaml.cs">
       <DependentUpon>UserControl_OriginImage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="YOLO\Models\YoloV5DefaultModel.cs" />
     <Compile Include="YOLO\Models\YoloV5OkNgModel.cs" />
-    <Compile Include="YOLO\Models\YoloV5FestoModel.cs" />
     <Compile Include="YOLO\Models\YoloV5SolderModel.cs" />
-    <Compile Include="YOLO\Models\YoloV5AmpouleModel.cs" />
     <Compile Include="YOLO\YOLOV5.cs" />
     <Page Include="Test\Test.xaml">
       <SubType>Designer</SubType>
