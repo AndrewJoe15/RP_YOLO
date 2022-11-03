@@ -184,9 +184,6 @@
     <Compile Include="View\UserCtrl\UserControl_OriginImage.xaml.cs">
       <DependentUpon>UserControl_OriginImage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="YOLO\Models\YoloV5DefaultModel.cs" />
-    <Compile Include="YOLO\Models\YoloV5OkNgModel.cs" />
-    <Compile Include="YOLO\Models\YoloV5SolderModel.cs" />
     <Compile Include="YOLO\YOLOV5.cs" />
     <Page Include="Test\Test.xaml">
       <SubType>Designer</SubType>
@@ -277,6 +274,17 @@
       <Project>{99d7a938-7f66-4c45-964a-966b9d55b506}</Project>
       <Name>Yolov5Net.Scorer</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="YOLO\Models\Bolt.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="YOLO\Models\Default.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="YOLO\Models\OKNG.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.4.6.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.4.6.0\build\MaterialDesignThemes.targets')" />

@@ -18,7 +18,6 @@ using System.IO;
 using Yolov5Net;
 using Yolov5Net.Scorer;
 using RP_YOLO.YOLO;
-using RP_YOLO.YOLO.Models;
 using System.Collections.ObjectModel;
 using Microsoft.ML.OnnxRuntime;
 using RP_YOLO.Model;
@@ -36,7 +35,7 @@ namespace RP_YOLO.View
         private string _originImagePath { get => _sourceFolderName + "\\" + lsb_sourceFiles.SelectedItem; }//原始图片路径
         private bool _isRunning = false; //运行flag
         private YOLOV5 m_yolov5;
-        private YoloV5OkNgModel m_yolov5_model = new YoloV5OkNgModel();
+        private YoloModel m_yolov5_model = new YoloModel();
 
         public Window_SingleImageDetect()
         {

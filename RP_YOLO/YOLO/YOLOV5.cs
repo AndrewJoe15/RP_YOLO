@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using Microsoft.ML.OnnxRuntime;
 using RP_YOLO.Model;
-using RP_YOLO.YOLO.Models;
+using RPSoft_Core.Utils;
 using Yolov5Net.Scorer;
 
 namespace RP_YOLO.YOLO
@@ -27,7 +27,7 @@ namespace RP_YOLO.YOLO
             SessionOptions sessionOptions = new SessionOptions();
             sessionOptions.AppendExecutionProvider_CUDA();
             // 默认的参数模板
-            YoloModel yoloModel = new YoloV5DefaultModel();
+            YoloModel yoloModel = XmlUtil.DeserializeObject<YoloModel>(@"YOLO\Models\Default.xml");
             // 加载模型文件
             scorer = new YoloScorer(yoloModel, onnxPath, sessionOptions);
         }

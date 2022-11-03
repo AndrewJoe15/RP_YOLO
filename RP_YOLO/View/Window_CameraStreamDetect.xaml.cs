@@ -14,11 +14,15 @@ using System.Threading.Tasks;
 using RPSoft_Core.Utils;
 using RP_YOLO.Model;
 using RP_YOLO.YOLO;
-using RP_YOLO.YOLO.Models;
 using System.Windows.Forms;
 using TextBox = System.Windows.Controls.TextBox;
 using System.Windows.Data;
 using Yolov5Net.Scorer;
+using System.Xml.Linq;
+using System.Xml.Serialization;
+using System.IO;
+using System.Xml;
+using System.Text;
 
 namespace RP_YOLO.View
 {
@@ -43,11 +47,15 @@ namespace RP_YOLO.View
         // ch:用于从驱动获取图像的缓存 | en:Buffer for getting image from driver
         private uint m_nBufSizeForDriver = 0;
 
+        private bool m_isRunning = false; //运行flag
+
         private YOLOV5 m_yolov5;
-        private YoloModel m_yolov5Model;
+        private YoloModel m_yolov5Model_default;
         private ObservableCollection<YoloLabel> m_yolov5ModelLabels;
 
-        private bool m_isRunning = false; //运行flag
+        private string m_yoloModelXml_default = @"YOLO\Models\Default.xml";
+        private string m_yoloModelXml_OKNG = @"YOLO\Models\OKNG.xml";
+        private string m_yoloModelXml_bolt = @"YOLO\Models\Bolt.xml";
 
         public Window_CameraStreamDetect()
         {
@@ -94,8 +102,12 @@ namespace RP_YOLO.View
 
         private async void btn_browse_modelFile_Click_Async(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog { Filter = "onnx files(*.onnx)|*.onnx" };
-            openFileDialog.Title = "请选择模型onnx文件";
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "onnx files(*.onnx)|*.onnx",
+                InitialDirectory = @"YOLO\Weights\",
+                Title = "请选择模型onnx文件"
+            };
 
             DialogResult result = openFileDialog.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)
@@ -109,13 +121,18 @@ namespace RP_YOLO.View
                 // 加载模型
                 if (await Task.Run(() => LoadModel(onnxPath)))
                 {
-                    // 加载完成，等待加载页面消失
-                    bd_loadingMask.Visibility = Visibility.Collapsed;
 
                     // 绑定上下文
-                    sp_modelParam.DataContext = m_yolov5Model = m_yolov5?.scorer?.model;
+                    sp_modelParam.DataContext = m_yolov5Model_default = m_yolov5?.scorer?.model;
                     m_yolov5ModelLabels = new ObservableCollection<YoloLabel>(m_yolov5?.scorer?.model.Labels);
                     dg_labels.DataContext = m_yolov5ModelLabels;
+
+                    // 控件
+                    // - 加载完成，等待加载页面消失
+                    bd_loadingMask.Visibility = Visibility.Collapsed;
+                    // - 模板下拉列表
+                    cbbi_modelType_default.IsSelected = true;
+
                 }
             }
         }
@@ -671,22 +688,22 @@ namespace RP_YOLO.View
         /// <param name="e"></param>
         private void cbb_modelType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (m_yolov5 == null || m_yolov5Model == null)
+            if (m_yolov5 == null || m_yolov5Model_default == null)
                 return;
             // 默认模型参数
             if (cbbi_modelType_default.IsSelected)
             {
-                m_yolov5.scorer.model = m_yolov5Model;
+                m_yolov5.scorer.model = m_yolov5Model_default;
             }
             // OKNG 模型
             else if (cbbi_modelType_OKNG.IsSelected)
             {
-                m_yolov5.scorer.model = new YoloV5OkNgModel();
+                m_yolov5.scorer.model = XmlUtil.DeserializeObject<YoloModel>(m_yoloModelXml_OKNG);
             }
             // 螺柱 模型
             else if (cbbi_modelType_bolt.IsSelected)
             {
-                m_yolov5.scorer.model = new YoloV5SolderModel();
+                m_yolov5.scorer.model = XmlUtil.DeserializeObject<YoloModel>(m_yoloModelXml_bolt);
             }
 
             // 绑定上下文
@@ -700,19 +717,47 @@ namespace RP_YOLO.View
             BindingUtil.BindData(txb_overlap, TextBox.TextProperty, "Overlap", BindingMode.TwoWay);*/
         }
 
-        private void txb_mulConfidence_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
         private void btn_modelParam_load_Click(object sender, RoutedEventArgs e)
         {
+            if (m_yolov5 == null)
+                return;
 
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                InitialDirectory = @"YOLO\",
+                Filter = "XML文件|*.xml;*.XML"
+            };
+            DialogResult result = openFileDialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                m_yolov5.scorer.model = XmlUtil.DeserializeObject<YoloModel>(openFileDialog.FileName);
+                // 绑定上下文
+                sp_modelParam.DataContext = m_yolov5?.scorer?.model;
+                m_yolov5ModelLabels = new ObservableCollection<YoloLabel>(m_yolov5?.scorer?.model.Labels);
+                dg_labels.DataContext = m_yolov5ModelLabels;
+            }
         }
 
         private void btn_modelParam_save_Click(object sender, RoutedEventArgs e)
         {
+            YoloModel yoloModel = m_yolov5?.scorer?.model;
 
+            if (yoloModel == null)
+                return;
+
+            // 保存文件对话框
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                InitialDirectory = @"YOLO\",
+                Filter = "XML|*.xml"
+            };
+
+            DialogResult result = saveFileDialog.ShowDialog();
+
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                XmlUtil.SerializeObject(yoloModel, saveFileDialog.FileName);
+            }
         }
     }
 }
