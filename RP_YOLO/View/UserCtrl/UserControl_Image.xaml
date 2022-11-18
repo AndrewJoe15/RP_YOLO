@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:userCtrl="clr-namespace:RP_YOLO.View.UserCtrl"
+             xmlns:roi="clr-namespace:RPSoft_Core.Graphics.ROI;assembly=RPSoft_Core"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -13,7 +14,12 @@
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
-            <MenuItem Header="亮度" Height="auto"/>
+            <MenuItem Header="显示" Height="auto">
+                <DockPanel Height="auto">
+                    <MenuItem Header="ROI"/>
+                    <CheckBox x:Name="cb_roi" IsChecked="True"/>                    
+                </DockPanel>
+            </MenuItem>
             <MenuItem Header="对比度" Height="auto"/>
             <MenuItem Header="画笔" Height="auto">
                 <MenuItem Header="粗细" Height="auto"/>
@@ -23,6 +29,10 @@
             </MenuItem>
         </Menu>
         <Image Grid.Row="1" x:Name="img_image"/>
+        <roi:ROICanvas Grid.Row="1" IsEnabled="{Binding}"
+                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent"
+                       TopLeftAnchor = "{Binding TopLeftAnchor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                       BottomRightAnchor = "{Binding BottomRightAnchor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
         <TextBlock Grid.Row="2" 
                    HorizontalAlignment="Right" 
                    VerticalAlignment="Center" 

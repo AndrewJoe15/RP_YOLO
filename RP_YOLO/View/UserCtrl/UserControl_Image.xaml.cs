@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RP_YOLO.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -26,6 +27,7 @@ namespace RP_YOLO.View.UserCtrl
         public UserControl_Image()
         {
             InitializeComponent();
+            DataContext = new ROIViewModel();
         }
 
         public void ShowImage(string path)
@@ -57,7 +59,7 @@ namespace RP_YOLO.View.UserCtrl
                 {
                     image.Save(stream, ImageFormat.Bmp);
                     SetImageSource(stream.ToArray());
-                }                
+                }
             }
             finally
             {
