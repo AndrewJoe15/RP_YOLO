@@ -8,21 +8,14 @@ using MvCamCtrl.NET;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Drawing.Imaging;
-using System.ComponentModel;
 using System.Threading.Tasks;
 
 using RPSoft_Core.Utils;
 using RP_YOLO.Model;
 using RP_YOLO.YOLO;
 using System.Windows.Forms;
-using TextBox = System.Windows.Controls.TextBox;
-using System.Windows.Data;
 using Yolov5Net.Scorer;
-using System.Xml.Linq;
-using System.Xml.Serialization;
-using System.IO;
-using System.Xml;
-using System.Text;
+using RP_YOLO.ViewModel;
 
 namespace RP_YOLO.View
 {
@@ -35,6 +28,7 @@ namespace RP_YOLO.View
         public static extern void CopyMemory(IntPtr dest, IntPtr src, uint count);
 
         public ObservableCollection<DetectResult> detectResults;
+        public ObservableCollection<MyCamera.MvGvspPixelType> pixelTypes;
 
         // 相机采集图像******
         private MyCamera.MV_CC_DEVICE_INFO_LIST m_stDeviceList = new MyCamera.MV_CC_DEVICE_INFO_LIST();
@@ -46,6 +40,8 @@ namespace RP_YOLO.View
         private IntPtr m_BufForFrame = IntPtr.Zero;
         // ch:用于从驱动获取图像的缓存 | en:Buffer for getting image from driver
         private uint m_nBufSizeForDriver = 0;
+        private PixelFormat m_pixelFormat = PixelFormat.Format8bppIndexed;
+        private ColorPalette m_pallette;
 
         private bool m_isRunning = false; //运行flag
 
@@ -53,28 +49,42 @@ namespace RP_YOLO.View
         private YoloModel m_yolov5Model_default;
         private ObservableCollection<YoloLabel> m_yolov5ModelLabels;
 
-        private string m_yoloModelXml_default = @"YOLO\Models\Default.xml";
-        private string m_yoloModelXml_OKNG = @"YOLO\Models\OKNG.xml";
-        private string m_yoloModelXml_bolt = @"YOLO\Models\Bolt.xml";
+        private readonly string m_yoloModelXml_default = @"YOLO\Models\Default.xml";
+        private readonly string m_yoloModelXml_OKNG = @"YOLO\Models\OKNG.xml";
+        private readonly string m_yoloModelXml_bolt = @"YOLO\Models\Bolt.xml";
 
         public Window_CameraStreamDetect()
         {
             InitializeComponent();
 
+            // 数据列表
             detectResults = new ObservableCollection<DetectResult>();
             dg_detectResult.DataContext = detectResults;
+            pixelTypes = new ObservableCollection<MyCamera.MvGvspPixelType>();
 
             // 初始化控件
             btn_connectCamera.IsEnabled = true;
             btn_disconnCamera.IsEnabled = false;
             btn_grabImage.IsEnabled = false;
             btn_stopGrabbing.IsEnabled = false;
+            // - loadingMask
+            bd_loadingMask.Visibility = Visibility.Collapsed;
 
             // 添加事件
             Closing += Window_CameraStreamDetect_Closing;
 
-            // loadingMask
-            bd_loadingMask.Visibility = Visibility.Collapsed;
+
+            // 相机全局变量初始化
+            // - 为单色相机定义调色板
+            Bitmap bmp = new Bitmap(1, 1, PixelFormat.Format8bppIndexed);
+            // Get the original palette. Note that this makes a COPY of the ColorPalette object.
+            m_pallette = bmp.Palette;
+            if (m_pixelFormat == PixelFormat.Format8bppIndexed)
+            {
+                // Generate grayscale colours:
+                for (int i = 0; i < 256; i++)
+                    m_pallette.Entries[i] = Color.FromArgb(i, i, i);
+            }
         }
 
         private void Window_CameraStreamDetect_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -121,11 +131,8 @@ namespace RP_YOLO.View
                 // 加载模型
                 if (await Task.Run(() => LoadModel(onnxPath)))
                 {
-
                     // 绑定上下文
-                    sp_modelParam.DataContext = m_yolov5Model_default = m_yolov5?.scorer?.model;
-                    m_yolov5ModelLabels = new ObservableCollection<YoloLabel>(m_yolov5?.scorer?.model.Labels);
-                    dg_labels.DataContext = m_yolov5ModelLabels;
+                    BindDataContext();
 
                     // 控件
                     // - 加载完成，等待加载页面消失
@@ -137,9 +144,21 @@ namespace RP_YOLO.View
             }
         }
 
+        private void BindDataContext()
+        {
+            if (m_yolov5?.scorer?.model != null)
+            {
+                sp_modelParam.DataContext = m_yolov5?.scorer?.model;
+                m_yolov5ModelLabels = new ObservableCollection<YoloLabel>(m_yolov5?.scorer?.model.Labels);
+                dg_labels.DataContext = m_yolov5ModelLabels;
+            }
+        }
+
         private bool LoadModel(string onnxPath)
         {
-            m_yolov5 = new YOLOV5(onnxPath);
+            // 默认的参数
+            m_yolov5Model_default = XmlUtil.DeserializeObject<YoloModel>(m_yoloModelXml_default);
+            m_yolov5 = new YOLOV5(m_yolov5Model_default, onnxPath);
             return m_yolov5 != null;
         }
 
@@ -328,12 +347,50 @@ namespace RP_YOLO.View
             {
                 // 获取所有支持的像素格式
                 uint[] results = stParam.nSupportValue;
-
                 for (int i = 0; i < stParam.nSupportedNum; i++)
-                    cbb_pixelFormat.Items.Add((MyCamera.MvGvspPixelType)results[i]);
+                {
+                    pixelTypes.Add((MyCamera.MvGvspPixelType)results[i]);
+                }
+                // 绑定像素格式列表
+                cbb_pixelFormat.ItemsSource = pixelTypes;
+
+                // 设置像素格式 彩色->GBR8 黑白->Mono8
+                MyCamera.MvGvspPixelType curPixelType = (MyCamera.MvGvspPixelType)stParam.nCurValue;
+                MyCamera.MvGvspPixelType tarPixelType = MyCamera.MvGvspPixelType.PixelType_Gvsp_Undefined;
+                if (PixelTypeViewModel.IsColorPixelFormat(curPixelType))
+                {
+                    // 像素格式设置为 BGR 8
+                    tarPixelType = MyCamera.MvGvspPixelType.PixelType_Gvsp_BGR8_Packed;
+                    m_pixelFormat = PixelFormat.Format24bppRgb;
+                }
+                else if (PixelTypeViewModel.IsMonoPixelFormat(curPixelType))
+                {
+                    // 像素格式设置为 Mono 8
+                    tarPixelType = MyCamera.MvGvspPixelType.PixelType_Gvsp_Mono8;
+                    m_pixelFormat = PixelFormat.Format8bppIndexed;
+                }
+
+                if (tarPixelType != MyCamera.MvGvspPixelType.PixelType_Gvsp_Undefined)
+                {
+                    m_MyCamera.MV_CC_SetPixelFormat_NET((uint)tarPixelType);
+
+                    // 展开收起一下列表 不然ComboBoxItem获取不到
+                    cbb_pixelFormat.IsDropDownOpen = true;
+                    cbb_pixelFormat.IsDropDownOpen = false;
+                    // 将不支持的像素格式禁用
+                    for (int i = 0; i < cbb_pixelFormat.Items.Count; i++)
+                    {
+                        ComboBoxItem cbbItem = (ComboBoxItem)cbb_pixelFormat.ItemContainerGenerator.ContainerFromIndex(i);
+                        // 如果不是这两种类型的像素格式则此项不可选
+                        if ((MyCamera.MvGvspPixelType)cbb_pixelFormat.Items[i] != MyCamera.MvGvspPixelType.PixelType_Gvsp_BGR8_Packed &&
+                            (MyCamera.MvGvspPixelType)cbb_pixelFormat.Items[i] != MyCamera.MvGvspPixelType.PixelType_Gvsp_Mono8)
+                        {
+                            cbbItem.IsEnabled = false;
+                        }
+                    }
+                    cbb_pixelFormat.SelectedItem = tarPixelType;
+                }
             }
-            // 设置当前选择的像素格式
-            cbb_pixelFormat.SelectedItem = (MyCamera.MvGvspPixelType)stParam.nCurValue;
         }
 
         private void GetTriggerMode()
@@ -415,8 +472,8 @@ namespace RP_YOLO.View
             txb_exposure.Text = "";
             txb_frameRate.Text = "";
             txb_gain.Text = "";
-            // - 下拉框
-            cbb_pixelFormat.Items.Clear();
+            // - 像素格式下拉列表
+            pixelTypes.Clear();
         }
 
         private void DisconnCamera()
@@ -517,6 +574,7 @@ namespace RP_YOLO.View
 
             MyCamera.MV_FRAME_OUT_INFO_EX stFrameInfo = new MyCamera.MV_FRAME_OUT_INFO_EX();
 
+
             while (m_bGrabbing)
             {
                 lock (BufForDriverLock)
@@ -535,15 +593,19 @@ namespace RP_YOLO.View
                         continue;
                     }
 
-                    Bitmap bitmap = new Bitmap(m_stFrameInfo.nWidth, m_stFrameInfo.nHeight, PixelFormat.Format24bppRgb);
+                    Bitmap bitmap = new Bitmap(m_stFrameInfo.nWidth, m_stFrameInfo.nHeight, m_pixelFormat);
                     Rectangle rect = new Rectangle(0, 0, m_stFrameInfo.nWidth, m_stFrameInfo.nHeight);
-                    BitmapData bitmapData = bitmap.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb);
+                    BitmapData bitmapData = bitmap.LockBits(rect, ImageLockMode.WriteOnly, m_pixelFormat);
                     unsafe
                     {
                         Buffer.MemoryCopy(m_BufForFrame.ToPointer(), bitmapData.Scan0.ToPointer(), m_nBufSizeForDriver, m_nBufSizeForDriver);
                     }
                     bitmap.UnlockBits(bitmapData);
-
+                    if (m_pixelFormat == PixelFormat.Format8bppIndexed)
+                    {
+                        // Assign the edited palette to the bitmap.
+                        bitmap.Palette = m_pallette;
+                    }
 
                     if (m_isRunning)
                     {
@@ -688,8 +750,10 @@ namespace RP_YOLO.View
         /// <param name="e"></param>
         private void cbb_modelType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // 如果还没有加载onnx模型
             if (m_yolov5 == null || m_yolov5Model_default == null)
                 return;
+
             // 默认模型参数
             if (cbbi_modelType_default.IsSelected)
             {
@@ -707,14 +771,12 @@ namespace RP_YOLO.View
             }
 
             // 绑定上下文
-            sp_modelParam.DataContext = m_yolov5?.scorer?.model;
-            m_yolov5ModelLabels = new ObservableCollection<YoloLabel>(m_yolov5?.scorer?.model.Labels);
-            dg_labels.DataContext = m_yolov5ModelLabels;
-
-            // 绑定
-            /*BindingUtil.BindData(txb_confidence, TextBox.TextProperty, "Confidence", BindingMode.OneWayToSource);
-            BindingUtil.BindData(txb_mulConfidence, TextBox.TextProperty, "MulConfidence", BindingMode.OneWayToSource);
-            BindingUtil.BindData(txb_overlap, TextBox.TextProperty, "Overlap", BindingMode.TwoWay);*/
+            if (m_yolov5?.scorer?.model != null)
+            {
+                sp_modelParam.DataContext = m_yolov5?.scorer?.model;
+                m_yolov5ModelLabels = new ObservableCollection<YoloLabel>();
+                dg_labels.DataContext = m_yolov5ModelLabels;
+            }
         }
 
         private void btn_modelParam_load_Click(object sender, RoutedEventArgs e)
@@ -732,9 +794,7 @@ namespace RP_YOLO.View
             {
                 m_yolov5.scorer.model = XmlUtil.DeserializeObject<YoloModel>(openFileDialog.FileName);
                 // 绑定上下文
-                sp_modelParam.DataContext = m_yolov5?.scorer?.model;
-                m_yolov5ModelLabels = new ObservableCollection<YoloLabel>(m_yolov5?.scorer?.model.Labels);
-                dg_labels.DataContext = m_yolov5ModelLabels;
+                BindDataContext();
             }
         }
 
