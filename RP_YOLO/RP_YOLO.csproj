@@ -160,12 +160,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Model\DetectResult.cs" />
-    <Compile Include="Model\YoloModelParam.cs" />
     <Compile Include="Test\Father.cs" />
     <Compile Include="Test\Son.cs" />
     <Compile Include="Test\Test.xaml.cs">
       <DependentUpon>Test.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\PixelTypeViewModel.cs" />
     <Compile Include="View\UserCtrl\UserControl_DetectedImage.xaml.cs">
       <DependentUpon>UserControl_DetectedImage.xaml</DependentUpon>
     </Compile>

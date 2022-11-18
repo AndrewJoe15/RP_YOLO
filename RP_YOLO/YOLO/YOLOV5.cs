@@ -16,21 +16,6 @@ namespace RP_YOLO.YOLO
     {
         public YoloScorer scorer { get; set; }
 
-        /// <summary>
-        /// 指定模型文件，构造对象
-        /// 模型参数使用默认的
-        /// </summary>
-        /// <param name="onnxPath"></param>
-        public YOLOV5(string onnxPath)
-        {
-            // 使用CUDA
-            SessionOptions sessionOptions = new SessionOptions();
-            sessionOptions.AppendExecutionProvider_CUDA();
-            // 默认的参数模板
-            YoloModel yoloModel = XmlUtil.DeserializeObject<YoloModel>(@"YOLO\Models\Default.xml");
-            // 加载模型文件
-            scorer = new YoloScorer(yoloModel, onnxPath, sessionOptions);
-        }
 
         /// <summary>
         /// 指定模型参数和模型文件以构造对象

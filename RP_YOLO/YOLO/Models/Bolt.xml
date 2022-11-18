@@ -69,7 +69,7 @@
       <Id>0</Id>
       <Name>Bolt</Name>
       <Kind>Generic</Kind>
-      <Color>Color [Green]</Color>
+      <Color>Green</Color>
     </YoloLabel>
   </Labels>
   <UseDetect>true</UseDetect>
