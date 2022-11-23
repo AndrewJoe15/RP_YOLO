@@ -49,6 +49,8 @@ namespace RP_YOLO.View
         private YoloModel m_yolov5Model_default;
         private ObservableCollection<YoloLabel> m_yolov5ModelLabels;
 
+        private ROIViewModel m_roi;
+
         private readonly string m_yoloModelXml_default = @"YOLO\Models\Default.xml";
         private readonly string m_yoloModelXml_OKNG = @"YOLO\Models\OKNG.xml";
         private readonly string m_yoloModelXml_bolt = @"YOLO\Models\Bolt.xml";
@@ -69,6 +71,7 @@ namespace RP_YOLO.View
             btn_stopGrabbing.IsEnabled = false;
             // - loadingMask
             bd_loadingMask.Visibility = Visibility.Collapsed;
+
 
             // 添加事件
             Closing += Window_CameraStreamDetect_Closing;
@@ -203,6 +206,10 @@ namespace RP_YOLO.View
                 if (e.GetType() == typeof(System.IO.FileNotFoundException))
                 {
                     System.Windows.MessageBox.Show("请选择源文件");
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show(e?.Message);
                 }
             }
         }
@@ -466,6 +473,7 @@ namespace RP_YOLO.View
             btn_disconnCamera.IsEnabled = false;
             btn_grabImage.IsEnabled = false;
             btn_stopGrabbing.IsEnabled = false;
+            sp_roi.IsEnabled = false;
             // - 图像
             uct_image.ShowImage("");
             // - 文本框
@@ -525,6 +533,7 @@ namespace RP_YOLO.View
             btn_disconnCamera.IsEnabled = true;
             btn_grabImage.IsEnabled = false;
             btn_stopGrabbing.IsEnabled = true;
+            sp_roi.IsEnabled = true;
         }
 
         private void btn_stopGrabbing_Click(object sender, RoutedEventArgs e)
@@ -545,6 +554,7 @@ namespace RP_YOLO.View
             btn_disconnCamera.IsEnabled = true;
             btn_grabImage.IsEnabled = true;
             btn_stopGrabbing.IsEnabled = false;
+            sp_roi.IsEnabled = false;
         }
 
         public void ReceiveThreadProcess()
@@ -609,13 +619,45 @@ namespace RP_YOLO.View
 
                     if (m_isRunning)
                     {
-                        RunDetect(bitmap);
+                        //如果原图片是索引像素格式的，则需要转换                        
+                        if (m_pixelFormat == PixelFormat.Format8bppIndexed)
+                        {
+                            Bitmap bmp = new Bitmap(bitmap.Width, bitmap.Height, PixelFormat.Format24bppRgb);
+                            using (Graphics g = Graphics.FromImage(bmp))
+                            {
+                                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                                g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                                g.DrawImage(bitmap, 0, 0);
+                            }
+
+                            Graphics graphics = Graphics.FromImage(bmp);
+                            RunDetect(bmp);
+                            // 异步调用显示图像
+                            _ = Dispatcher.InvokeAsync(new Action(delegate
+                            {
+                                uct_image.ShowImage(bmp);
+                            }), System.Windows.Threading.DispatcherPriority.Render);
+                        }
+                        else
+                        {
+                            RunDetect(bitmap);
+                            // 异步调用显示图像
+                            _ = Dispatcher.InvokeAsync(new Action(delegate
+                            {
+                                uct_image.ShowImage(bitmap);
+                            }), System.Windows.Threading.DispatcherPriority.Render);
+                        }
+
                     }
-                    // 异步调用显示图像
-                    _ = Dispatcher.InvokeAsync(new Action(delegate
-                      {
-                          uct_image.ShowImage(bitmap);
-                      }), System.Windows.Threading.DispatcherPriority.Render);
+                    else
+                    {
+                        // 异步调用显示图像
+                        _ = Dispatcher.InvokeAsync(new Action(delegate
+                          {
+                              uct_image.ShowImage(bitmap);
+                          }), System.Windows.Threading.DispatcherPriority.Render);
+                    }
                 }
             }
         }
@@ -817,6 +859,39 @@ namespace RP_YOLO.View
             if (result == System.Windows.Forms.DialogResult.OK)
             {
                 XmlUtil.SerializeObject(yoloModel, saveFileDialog.FileName);
+            }
+        }
+        /// <summary>
+        /// ROI
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cb_roi_Checked(object sender, RoutedEventArgs e)
+        {
+            // 如果没有ROI，新建一个
+            if (m_roi == null || m_roi.RoiWidth == 0 || m_roi.RoiHeight == 0)
+            {
+                // ROI初始化
+                System.Windows.Point center = new System.Windows.Point(uct_image.canvas_roi.ActualWidth * 0.5, uct_image.canvas_roi.ActualHeight * 0.5);
+                // roi初始在画面中心 长宽占图像长宽一半
+                m_roi = new ROIViewModel(new System.Windows.Point(center.X * 0.5, center.Y * 0.5), new System.Windows.Point(center.X * 1.5, center.Y * 1.5))
+                {
+                    IsVisible = true
+                };
+
+                uct_image.canvas_roi.DataContext = m_roi;
+                sp_roi.DataContext = m_roi;
+            }
+            sp_roi_param.IsEnabled = true;
+            cb_roi_visibility.IsChecked = true;
+        }
+
+        private void cb_roi_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (m_roi != null)
+            {
+                cb_roi_visibility.IsChecked = false;
+                sp_roi_param.IsEnabled = false;
             }
         }
     }

@@ -27,7 +27,6 @@ namespace RP_YOLO.View.UserCtrl
         public UserControl_Image()
         {
             InitializeComponent();
-            DataContext = new ROIViewModel();
         }
 
         public void ShowImage(string path)

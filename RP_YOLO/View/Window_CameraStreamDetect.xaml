@@ -128,20 +128,34 @@
                                   SelectionChanged="cbb_pixelFormat_SelectionChanged"/>
                             </DockPanel>
                         </StackPanel>
-                        <StackPanel Grid.Row="3" Margin="0,10,0,5">
-                            <Label Grid.Column="0" Grid.Row="0" Content="ROI"/>
+                        <StackPanel Grid.Row="3" Margin="0,10,0,5" x:Name="sp_roi" DataContext="{Binding}" IsEnabled="False">
+                            <DockPanel LastChildFill="False">
+                                <Label Grid.Column="0" Grid.Row="0" Content="ROI"/>
+                                <CheckBox DockPanel.Dock="Right" x:Name="cb_roi" Checked="cb_roi_Checked" Unchecked="cb_roi_Unchecked"/>
+                            </DockPanel>
+                            <StackPanel x:Name="sp_roi_param">
+                                <DockPanel Height="auto">
+                                    <MenuItem Header="可见"/>
+                                    <CheckBox x:Name="cb_roi_visibility" IsChecked="{Binding IsVisible}"/>
+                                </DockPanel>
+                                <DockPanel Height="auto">
+                                    <MenuItem Header="固定"/>
+                                    <CheckBox x:Name="cb_roi_fixed" IsChecked="{Binding IsFixed}"/>
+                                </DockPanel>                          
                             <Grid>
                                 <Grid.Resources>
                                     <Style TargetType="TextBox">
                                         <Setter Property="Margin" Value="5,3,5,3"/>
                                         <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                        <Setter Property="IsReadOnly" Value="True"/>
                                     </Style>
                                     <Style TargetType="Label">
                                         <Setter Property="FontSize" Value="12"/>
                                     </Style>
                                 </Grid.Resources>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="17"/>
+                                    <ColumnDefinition Width="16"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
@@ -149,13 +163,18 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <Label Content="X,Y" Grid.Row="0" Grid.Column="0"/>
-                                <Label Content="W,H" Grid.Row="1" Grid.Column="0"/>
-                                <TextBox x:Name="cbb_roi_x" Grid.Row="0" Grid.Column="1"/>
-                                <TextBox x:Name="cbb_roi_y" Grid.Row="0" Grid.Column="2"/>
-                                <TextBox x:Name="cbb_roi_w" Grid.Row="1" Grid.Column="1"/>
-                                <TextBox x:Name="cbb_roi_h" Grid.Row="1" Grid.Column="2"/>
-                            </Grid>
+                                <Label Content="X,Y" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
+                                <Label Content="W,H" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
+                                <TextBox x:Name="cbb_roi_x" Grid.Row="0" Grid.Column="2" Text="{Binding Center.X, Mode=OneWay, StringFormat={}{0:F2}}"/>
+                                    <TextBox x:Name="cbb_roi_y" Grid.Row="0" Grid.Column="3" Text="{Binding Center.Y, Mode=OneWay, StringFormat={}{0:F2}}"/>
+                                <TextBox x:Name="cbb_roi_w" Grid.Row="1" Grid.Column="2" Text="{Binding RoiWidth, Mode=OneWay}"/>
+                                <TextBox x:Name="cbb_roi_h" Grid.Row="1" Grid.Column="3" Text="{Binding RoiHeight, Mode=OneWay}"/>
+                                </Grid>
+                                <DockPanel>
+                                    <Label Content="曝光" Margin="5,1,10,1"/>
+                                    <TextBox x:Name="txb_tl_x" Text="{Binding TopLeftAnchor.X, Mode=OneWay}"/>
+                                </DockPanel>
+                            </StackPanel>
                         </StackPanel>
 
                     </Grid>

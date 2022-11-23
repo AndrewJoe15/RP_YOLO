@@ -4,9 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:userCtrl="clr-namespace:RP_YOLO.View.UserCtrl"
-             xmlns:roi="clr-namespace:RPSoft_Core.Graphics.ROI;assembly=RPSoft_Core"
+             xmlns:roi="clr-namespace:RPSoft_Core.GUI.ROI;assembly=RPSoft_Core"
+             xmlns:cvt="clr-namespace:RPSoft_Core.GUI.Converter;assembly=RPSoft_Core"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <cvt:Bool2VisibilityConverter x:Key="bool2VisibilityConverter"/>
+        <cvt:BoolInverseConverter x:Key="boolInversConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
@@ -14,11 +19,7 @@
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
-            <MenuItem Header="显示" Height="auto">
-                <DockPanel Height="auto">
-                    <MenuItem Header="ROI"/>
-                    <CheckBox x:Name="cb_roi" IsChecked="True"/>                    
-                </DockPanel>
+            <MenuItem Header="ROI" Height="auto">
             </MenuItem>
             <MenuItem Header="对比度" Height="auto"/>
             <MenuItem Header="画笔" Height="auto">
@@ -29,10 +30,15 @@
             </MenuItem>
         </Menu>
         <Image Grid.Row="1" x:Name="img_image"/>
-        <roi:ROICanvas Grid.Row="1" IsEnabled="{Binding}"
+        <roi:ROICanvas x:Name="canvas_roi" Grid.Row="1"
+                       Width="{Binding Path=ActualWidth, ElementName=img_image}"
+                       Height="{Binding Path=ActualHeight, ElementName=img_image}"
                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent"
+                       Visibility="{Binding IsVisible, Converter={StaticResource bool2VisibilityConverter}, Mode=TwoWay}"
+                       IsEnabled="{Binding IsFixed, Converter={StaticResource boolInversConverter}, Mode=TwoWay}"
+                       BottomRightAnchor = "{Binding BottomRightAnchor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                        TopLeftAnchor = "{Binding TopLeftAnchor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                       BottomRightAnchor = "{Binding BottomRightAnchor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                       RoiWidth="{Binding RoiWidth, Mode=TwoWay}"/>
         <TextBlock Grid.Row="2" 
                    HorizontalAlignment="Right" 
                    VerticalAlignment="Center" 
