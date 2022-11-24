@@ -141,34 +141,34 @@
                                 <DockPanel Height="auto">
                                     <MenuItem Header="固定"/>
                                     <CheckBox x:Name="cb_roi_fixed" IsChecked="{Binding IsFixed}"/>
-                                </DockPanel>                          
-                            <Grid>
-                                <Grid.Resources>
-                                    <Style TargetType="TextBox">
-                                        <Setter Property="Margin" Value="5,3,5,3"/>
-                                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                                        <Setter Property="IsReadOnly" Value="True"/>
-                                    </Style>
-                                    <Style TargetType="Label">
-                                        <Setter Property="FontSize" Value="12"/>
-                                    </Style>
-                                </Grid.Resources>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="17"/>
-                                    <ColumnDefinition Width="16"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <Label Content="X,Y" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
-                                <Label Content="W,H" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
-                                <TextBox x:Name="cbb_roi_x" Grid.Row="0" Grid.Column="2" Text="{Binding Center.X, Mode=OneWay, StringFormat={}{0:F2}}"/>
-                                    <TextBox x:Name="cbb_roi_y" Grid.Row="0" Grid.Column="3" Text="{Binding Center.Y, Mode=OneWay, StringFormat={}{0:F2}}"/>
-                                <TextBox x:Name="cbb_roi_w" Grid.Row="1" Grid.Column="2" Text="{Binding RoiWidth, Mode=OneWay}"/>
-                                <TextBox x:Name="cbb_roi_h" Grid.Row="1" Grid.Column="3" Text="{Binding RoiHeight, Mode=OneWay}"/>
+                                </DockPanel>
+                                <Grid>
+                                    <Grid.Resources>
+                                        <Style TargetType="TextBox">
+                                            <Setter Property="Margin" Value="5,3,5,3"/>
+                                            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                            <Setter Property="IsReadOnly" Value="True"/>
+                                        </Style>
+                                        <Style TargetType="Label">
+                                            <Setter Property="FontSize" Value="12"/>
+                                        </Style>
+                                    </Grid.Resources>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="17"/>
+                                        <ColumnDefinition Width="16"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Label Content="X,Y" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
+                                    <Label Content="W,H" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
+                                    <TextBox x:Name="cbb_roi_x" Grid.Row="0" Grid.Column="2" Text="{Binding CenterAnchor.X, Mode=OneWay, StringFormat={}{0:F0}}"/>
+                                    <TextBox x:Name="cbb_roi_y" Grid.Row="0" Grid.Column="3" Text="{Binding CenterAnchor.Y, Mode=OneWay, StringFormat={}{0:F0}}"/>
+                                    <TextBox x:Name="cbb_roi_w" Grid.Row="1" Grid.Column="2" Text="{Binding RoiWidth, Mode=OneWay, StringFormat={}{0:F0}}"/>
+                                    <TextBox x:Name="cbb_roi_h" Grid.Row="1" Grid.Column="3" Text="{Binding RoiHeight, Mode=OneWay, StringFormat={}{0:F0}}"/>
                                 </Grid>
                                 <DockPanel>
                                     <Label Content="曝光" Margin="5,1,10,1"/>

@@ -473,7 +473,7 @@ namespace RP_YOLO.View
             btn_disconnCamera.IsEnabled = false;
             btn_grabImage.IsEnabled = false;
             btn_stopGrabbing.IsEnabled = false;
-            sp_roi.IsEnabled = false;
+            DisableROI();
             // - 图像
             uct_image.ShowImage("");
             // - 文本框
@@ -482,6 +482,19 @@ namespace RP_YOLO.View
             txb_gain.Text = "";
             // - 像素格式下拉列表
             pixelTypes.Clear();
+        }
+
+        private void DisableROI()
+        {
+            sp_roi.IsEnabled = false;
+            uct_image.canvas_roi.IsEnabled = false;
+            uct_image.canvas_roi.Visibility = Visibility.Collapsed;
+        }
+        private void EnableROI()
+        {
+            sp_roi.IsEnabled = true;
+            uct_image.canvas_roi.IsEnabled = true;
+            uct_image.canvas_roi.Visibility = Visibility.Visible;
         }
 
         private void DisconnCamera()
@@ -533,7 +546,7 @@ namespace RP_YOLO.View
             btn_disconnCamera.IsEnabled = true;
             btn_grabImage.IsEnabled = false;
             btn_stopGrabbing.IsEnabled = true;
-            sp_roi.IsEnabled = true;
+            EnableROI();
         }
 
         private void btn_stopGrabbing_Click(object sender, RoutedEventArgs e)
@@ -554,7 +567,7 @@ namespace RP_YOLO.View
             btn_disconnCamera.IsEnabled = true;
             btn_grabImage.IsEnabled = true;
             btn_stopGrabbing.IsEnabled = false;
-            sp_roi.IsEnabled = false;
+            DisableROI();
         }
 
         public void ReceiveThreadProcess()
@@ -872,7 +885,7 @@ namespace RP_YOLO.View
             if (m_roi == null || m_roi.RoiWidth == 0 || m_roi.RoiHeight == 0)
             {
                 // ROI初始化
-                System.Windows.Point center = new System.Windows.Point(uct_image.canvas_roi.ActualWidth * 0.5, uct_image.canvas_roi.ActualHeight * 0.5);
+                System.Windows.Point center = new System.Windows.Point(uct_image.img_image.ActualWidth * 0.5, uct_image.img_image.ActualHeight * 0.5);
                 // roi初始在画面中心 长宽占图像长宽一半
                 m_roi = new ROIViewModel(new System.Windows.Point(center.X * 0.5, center.Y * 0.5), new System.Windows.Point(center.X * 1.5, center.Y * 1.5))
                 {

@@ -38,7 +38,9 @@
                        IsEnabled="{Binding IsFixed, Converter={StaticResource boolInversConverter}, Mode=TwoWay}"
                        BottomRightAnchor = "{Binding BottomRightAnchor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                        TopLeftAnchor = "{Binding TopLeftAnchor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                       RoiWidth="{Binding RoiWidth, Mode=TwoWay}"/>
+                       CenterAnchor = "{Binding CenterAnchor, Mode=TwoWay}"
+                       RoiWidth="{Binding RoiWidth, Mode=TwoWay}"
+                       RoiHeight="{Binding RoiHeight, Mode=TwoWay}"/>
         <TextBlock Grid.Row="2" 
                    HorizontalAlignment="Right" 
                    VerticalAlignment="Center" 

@@ -11,6 +11,7 @@ namespace RP_YOLO.ViewModel
         {
             topLeftAnchor = anchor_tl;
             bottomRightAnchor = anchor_br;
+            centerAnchor = Point.Add(anchor_tl, (anchor_br - anchor_tl) * 0.5);
             roiWidth = (anchor_br - anchor_tl).X;
             roiHeight = (anchor_br - anchor_tl).Y;
         }
@@ -71,13 +72,13 @@ namespace RP_YOLO.ViewModel
         /// <summary>
         /// 中心点
         /// </summary>
-        private Point center;
-        public Point Center
+        private Point centerAnchor;
+        public Point CenterAnchor
         {
-            get => center;
+            get => centerAnchor;
             set
             {
-                center = value;
+                centerAnchor = value;
                 OnPropertyChanged();
             }
         }
