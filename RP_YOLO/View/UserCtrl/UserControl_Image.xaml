@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:userCtrl="clr-namespace:RP_YOLO.View.UserCtrl"
              xmlns:roi="clr-namespace:RPSoft_Core.GUI.ROI;assembly=RPSoft_Core"
              xmlns:cvt="clr-namespace:RPSoft_Core.GUI.Converter;assembly=RPSoft_Core"
              mc:Ignorable="d" 

@@ -80,7 +80,7 @@ namespace RP_YOLO.View
             if (result == System.Windows.Forms.DialogResult.OK)
             {
                 string onnxPath = tbx_modelFile.Text = openFileDialog.FileName;
-                m_yolov5 = new YOLOV5(m_yolov5_model, onnxPath);
+                m_yolov5 = new YOLOV5(ref m_yolov5_model, onnxPath);
             }
         }
 

@@ -72,7 +72,6 @@ namespace RP_YOLO.View
             // - loadingMask
             bd_loadingMask.Visibility = Visibility.Collapsed;
 
-
             // 添加事件
             Closing += Window_CameraStreamDetect_Closing;
 
@@ -134,14 +133,14 @@ namespace RP_YOLO.View
                 // 加载模型
                 if (await Task.Run(() => LoadModel(onnxPath)))
                 {
-                    // 绑定上下文
-                    BindDataContext();
-
                     // 控件
                     // - 加载完成，等待加载页面消失
                     bd_loadingMask.Visibility = Visibility.Collapsed;
                     // - 模板下拉列表
                     cbbi_modelType_default.IsSelected = true;
+
+                    // 绑定上下文
+                    BindDataContext();
 
                 }
             }
@@ -161,7 +160,7 @@ namespace RP_YOLO.View
         {
             // 默认的参数
             m_yolov5Model_default = XmlUtil.DeserializeObject<YoloModel>(m_yoloModelXml_default);
-            m_yolov5 = new YOLOV5(m_yolov5Model_default, onnxPath);
+            m_yolov5 = new YOLOV5(ref m_yolov5Model_default, onnxPath);
             return m_yolov5 != null;
         }
 
@@ -190,7 +189,23 @@ namespace RP_YOLO.View
         {
             try
             {
-                m_yolov5.ObjectDetect(bitmap, out DetectResult result);
+                DetectResult result;
+                // 如果启用了ROI
+                if (m_roi != null && m_roi.RoiWidth != 0 && m_roi.IsUsing)
+                {
+                    // 实际 / 显示 比例
+                    double ratio = bitmap.Width / uct_image.img_image.ActualWidth;
+                    Rectangle roiRect = new Rectangle((int)(m_roi.TopLeftAnchor.X * ratio), (int)(m_roi.TopLeftAnchor.Y * ratio), (int)(m_roi.RoiWidth * ratio), (int)(m_roi.RoiHeight * ratio));
+                    if (roiRect.Width * roiRect.Height > bitmap.Width * bitmap.Height)
+                    {
+                        roiRect = new Rectangle(0, 0, bitmap.Width , bitmap.Height);
+                    }
+                    m_yolov5.ObjectDetect(bitmap, roiRect, out result);
+                }
+                else
+                {
+                    m_yolov5.ObjectDetect(bitmap, out result);
+                }
                 _ = Dispatcher.InvokeAsync(new Action(delegate
                   {
                       if (detectResults.Count == 0)
@@ -473,6 +488,12 @@ namespace RP_YOLO.View
             btn_disconnCamera.IsEnabled = false;
             btn_grabImage.IsEnabled = false;
             btn_stopGrabbing.IsEnabled = false;
+            if (m_isRunning)
+            {
+                m_isRunning = false;
+                btn_run.Content = "运行";
+            }
+            //ROI
             DisableROI();
             // - 图像
             uct_image.ShowImage("");
@@ -553,7 +574,11 @@ namespace RP_YOLO.View
         {
             // ch:标志位设为false | en:Set flag bit false
             m_bGrabbing = false;
-            m_isRunning = false;
+            if (m_isRunning)
+            {
+                m_isRunning = false;
+                btn_run.Content = "运行";
+            }
             m_hReceiveThread.Join();
 
             // ch:停止采集 | en:Stop Grabbing
@@ -643,8 +668,6 @@ namespace RP_YOLO.View
                                 g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
                                 g.DrawImage(bitmap, 0, 0);
                             }
-
-                            Graphics graphics = Graphics.FromImage(bmp);
                             RunDetect(bmp);
                             // 异步调用显示图像
                             _ = Dispatcher.InvokeAsync(new Action(delegate
@@ -889,7 +912,8 @@ namespace RP_YOLO.View
                 // roi初始在画面中心 长宽占图像长宽一半
                 m_roi = new ROIViewModel(new System.Windows.Point(center.X * 0.5, center.Y * 0.5), new System.Windows.Point(center.X * 1.5, center.Y * 1.5))
                 {
-                    IsVisible = true
+                    IsVisible = true,
+                    IsUsing = true,
                 };
 
                 uct_image.canvas_roi.DataContext = m_roi;

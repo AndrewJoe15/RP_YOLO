@@ -131,7 +131,7 @@
                         <StackPanel Grid.Row="3" Margin="0,10,0,5" x:Name="sp_roi" DataContext="{Binding}" IsEnabled="False">
                             <DockPanel LastChildFill="False">
                                 <Label Grid.Column="0" Grid.Row="0" Content="ROI"/>
-                                <CheckBox DockPanel.Dock="Right" x:Name="cb_roi" Checked="cb_roi_Checked" Unchecked="cb_roi_Unchecked"/>
+                                <CheckBox DockPanel.Dock="Right" x:Name="cb_roi" IsChecked="{Binding IsUsing}" Checked="cb_roi_Checked" Unchecked="cb_roi_Unchecked"/>
                             </DockPanel>
                             <StackPanel x:Name="sp_roi_param">
                                 <DockPanel Height="auto">
@@ -154,26 +154,27 @@
                                         </Style>
                                     </Grid.Resources>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="17"/>
-                                        <ColumnDefinition Width="16"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
                                         <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
                                         <RowDefinition/>
                                         <RowDefinition/>
                                     </Grid.RowDefinitions>
-                                    <Label Content="X,Y" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
-                                    <Label Content="W,H" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
+                                    <Label Content="中心" Grid.Row="0" Grid.Column="0"/>
+                                    <Label Content="X" Grid.Row="0" Grid.Column="1"/>
+                                    <Label Content="Y" Grid.Row="0" Grid.Column="3"/>
+                                    <Label Content="尺寸" Grid.Row="1" Grid.Column="0"/>
+                                    <Label Content="W" Grid.Row="1" Grid.Column="1"/>
+                                    <Label Content="H" Grid.Row="1" Grid.Column="3"/>
                                     <TextBox x:Name="cbb_roi_x" Grid.Row="0" Grid.Column="2" Text="{Binding CenterAnchor.X, Mode=OneWay, StringFormat={}{0:F0}}"/>
-                                    <TextBox x:Name="cbb_roi_y" Grid.Row="0" Grid.Column="3" Text="{Binding CenterAnchor.Y, Mode=OneWay, StringFormat={}{0:F0}}"/>
+                                    <TextBox x:Name="cbb_roi_y" Grid.Row="0" Grid.Column="4" Text="{Binding CenterAnchor.Y, Mode=OneWay, StringFormat={}{0:F0}}"/>
                                     <TextBox x:Name="cbb_roi_w" Grid.Row="1" Grid.Column="2" Text="{Binding RoiWidth, Mode=OneWay, StringFormat={}{0:F0}}"/>
-                                    <TextBox x:Name="cbb_roi_h" Grid.Row="1" Grid.Column="3" Text="{Binding RoiHeight, Mode=OneWay, StringFormat={}{0:F0}}"/>
+                                    <TextBox x:Name="cbb_roi_h" Grid.Row="1" Grid.Column="4" Text="{Binding RoiHeight, Mode=OneWay, StringFormat={}{0:F0}}"/>
                                 </Grid>
-                                <DockPanel>
-                                    <Label Content="曝光" Margin="5,1,10,1"/>
-                                    <TextBox x:Name="txb_tl_x" Text="{Binding TopLeftAnchor.X, Mode=OneWay}"/>
-                                </DockPanel>
                             </StackPanel>
                         </StackPanel>
 

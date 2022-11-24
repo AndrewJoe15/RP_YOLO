@@ -66,8 +66,6 @@
     <string>output0</string>
   </Outputs>
   <Labels>
-    <YoloLabel>
-    </YoloLabel>
   </Labels>
   <UseDetect>true</UseDetect>
 </YoloModel>

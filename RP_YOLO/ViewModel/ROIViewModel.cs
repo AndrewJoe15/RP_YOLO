@@ -22,6 +22,17 @@ namespace RP_YOLO.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+        private bool isUsing;
+        public bool IsUsing
+        {
+            get => isUsing;
+            set
+            {
+                isUsing = value;
+                OnPropertyChanged();
+            }
+        }
+
         private bool isVisible = false;
         public bool IsVisible
         {
@@ -98,7 +109,7 @@ namespace RP_YOLO.ViewModel
         /// <summary>
         /// ROI框高
         /// </summary>
-        public double roiHeight;
+        private double roiHeight;
         public double RoiHeight
         {
             get => roiHeight;
