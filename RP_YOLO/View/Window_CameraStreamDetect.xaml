@@ -205,37 +205,52 @@
                                 <Button x:Name="btn_modelParam_save" Content="保存" Margin="5,3,5,3" Style="{DynamicResource MaterialDesignRaisedLightButton}"
                                         Click="btn_modelParam_save_Click" FontSize="10" Height="auto" DockPanel.Dock="Right"/>
                             </DockPanel>
-                            <DockPanel>
-                                <Label Content="Confidence" Margin="5,1,10,1"/>
-                                <TextBox x:Name="txb_confidence" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                                         Text="{Binding Path=Confidence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                            </DockPanel>
-                            <DockPanel>
-                                <Label Content="MulConfidence" Margin="5,1,10,1"/>
-                                <TextBox x:Name="txb_mulConfidence" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                                         Text="{Binding Path=MulConfidence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                            </DockPanel>
-                            <DockPanel>
-                                <Label Content="Overlap" Margin="5,1,10,1"/>
-                                <TextBox x:Name="txb_overlap" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
-                                         Text="{Binding Path=Overlap, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                            </DockPanel>
-                            <DockPanel>
-                                <Label Content="最大检测数" Margin="5,1,10,1"/>
-                                <TextBox x:Name="txb_maxDetections" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
-                                         Text="{Binding Path=MaxDetections, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                            </DockPanel>
                             <StackPanel>
-                                <Label Content="标签"/>
-                                <DataGrid x:Name="dg_labels" ItemsSource="{Binding}" AutoGenerateColumns="False" CanUserAddRows="False">
-                                    <DataGrid.Columns>
-                                        <DataGridTextColumn Header="ID" Width="auto" Binding="{Binding Id}" IsReadOnly="True"/>
-                                        <DataGridTextColumn Header="名称" Width="auto" Binding="{Binding Name}" IsReadOnly="False"/>
-                                        <DataGridComboBoxColumn Header="颜色" Width="auto" SelectedItemBinding="{Binding Color}" ItemsSource="{Binding Source={x:Static yoloScorer:YoloLabel.Colors}}" IsReadOnly="False" />
-                                    </DataGrid.Columns>
-                                </DataGrid>
+                                <StackPanel.Resources>
+                                    <Style TargetType="Label">
+                                        <Setter Property="Margin" Value="5,1,5,1"/>
+                                    </Style>
+                                </StackPanel.Resources>                                
+                                <DockPanel>
+                                    <Label Content="Confidence" Margin="5,1,10,1"/>
+                                    <TextBox x:Name="txb_confidence" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                         Text="{Binding Path=Confidence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="MulConfidence" Margin="5,1,10,1"/>
+                                    <TextBox x:Name="txb_mulConfidence" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                         Text="{Binding Path=MulConfidence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Overlap" Margin="5,1,10,1"/>
+                                    <TextBox x:Name="txb_overlap" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
+                                         Text="{Binding Path=Overlap, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="最大检测数" Margin="5,1,10,1"/>
+                                    <TextBox x:Name="txb_maxDetections" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
+                                         Text="{Binding Path=MaxDetections, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DockPanel>
+                                <StackPanel>
+                                    <Label Content="标签"/>
+                                    <DataGrid x:Name="dg_labels" ItemsSource="{Binding}" AutoGenerateColumns="False" CanUserAddRows="False">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="ID" Width="auto" Binding="{Binding Id}" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="名称" Width="auto" Binding="{Binding Name}" IsReadOnly="False"/>
+                                            <DataGridComboBoxColumn Header="颜色" Width="auto" SelectedItemBinding="{Binding Color}" ItemsSource="{Binding Source={x:Static yoloScorer:YoloLabel.Colors}}" IsReadOnly="False" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
                             </StackPanel>
                         </StackPanel>
+                        <DockPanel LastChildFill="False">
+                            <Label Content="运算器"  Margin="5,1,10,1"/>
+                            <DockPanel LastChildFill="False" DockPanel.Dock="Right">
+                                <Label Content="CPU"/>
+                                <ToggleButton x:Name="tbtn_cpu_gpu_trigger" Checked="tbtn_cpu_gpu_trigger_Checked" Unchecked="tbtn_cpu_gpu_trigger_Unchecked" Style="{DynamicResource MaterialDesignSwitchToggleButton}"/>
+                                <Label Content="GPU"/>
+                            </DockPanel>
+                        </DockPanel>
                         <Button Grid.Column="3" x:Name="btn_run" Content="运行" Grid.Row="2" Width="auto" Margin="5,3,5,3" Style="{DynamicResource MaterialDesignRaisedDarkButton}"
                         Click="btn_run_Click"/>
                     </StackPanel>

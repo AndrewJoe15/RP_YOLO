@@ -18,7 +18,6 @@ namespace RP_YOLO.YOLO
     {
         public YoloScorer scorer { get; set; }
 
-
         /// <summary>
         /// 指定模型参数和模型文件以构造对象
         /// </summary>
@@ -31,6 +30,28 @@ namespace RP_YOLO.YOLO
             sessionOptions.AppendExecutionProvider_CUDA();
             // 加载模型文件
             scorer = new YoloScorer(ref yoloModel, onnxPath, sessionOptions);
+        }
+
+        /// <summary>
+        /// 指定模型参数和模型文件以构造对象
+        /// </summary>
+        /// <param name="yoloModel"></param>
+        /// <param name="onnxPath"></param>
+        public YOLOV5(ref YoloModel yoloModel, string onnxPath, bool usingGPU)
+        {
+            if (usingGPU)
+            {
+                // 使用CUDA
+                SessionOptions sessionOptions = new SessionOptions();
+                sessionOptions.AppendExecutionProvider_CUDA();
+                // 加载模型文件
+                scorer = new YoloScorer(ref yoloModel, onnxPath, sessionOptions);
+            }
+            else
+            {
+                // 加载模型文件
+                scorer = new YoloScorer(ref yoloModel, onnxPath);
+            }
         }
 
         /// <summary>

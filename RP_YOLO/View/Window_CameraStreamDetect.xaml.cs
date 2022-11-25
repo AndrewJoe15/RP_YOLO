@@ -44,8 +44,10 @@ namespace RP_YOLO.View
         private ColorPalette m_pallette;
 
         private bool m_isRunning = false; //运行flag
-
+        private bool m_usingGPU;
         private YOLOV5 m_yolov5;
+        private YOLOV5 m_yolov5_gpu;
+        private YOLOV5 m_yolov5_cpu;
         private YoloModel m_yolov5Model_default;
         private ObservableCollection<YoloLabel> m_yolov5ModelLabels;
 
@@ -71,7 +73,7 @@ namespace RP_YOLO.View
             btn_stopGrabbing.IsEnabled = false;
             // - loadingMask
             bd_loadingMask.Visibility = Visibility.Collapsed;
-
+            m_usingGPU = tbtn_cpu_gpu_trigger.IsChecked == true;
             // 添加事件
             Closing += Window_CameraStreamDetect_Closing;
 
@@ -160,7 +162,16 @@ namespace RP_YOLO.View
         {
             // 默认的参数
             m_yolov5Model_default = XmlUtil.DeserializeObject<YoloModel>(m_yoloModelXml_default);
-            m_yolov5 = new YOLOV5(ref m_yolov5Model_default, onnxPath);
+            m_yolov5_gpu = new YOLOV5(ref m_yolov5Model_default, onnxPath, true);
+            m_yolov5_cpu = new YOLOV5(ref m_yolov5Model_default, onnxPath, false);
+            if (m_usingGPU)
+            {
+                m_yolov5 = m_yolov5_gpu;
+            }
+            else
+            {
+                m_yolov5 = m_yolov5_cpu;
+            }
             return m_yolov5 != null;
         }
 
@@ -829,7 +840,7 @@ namespace RP_YOLO.View
         private void cbb_modelType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // 如果还没有加载onnx模型
-            if (m_yolov5 == null || m_yolov5Model_default == null)
+            if (m_yolov5 == null || m_yolov5.scorer == null || m_yolov5Model_default == null)
                 return;
 
             // 默认模型参数
@@ -929,6 +940,24 @@ namespace RP_YOLO.View
             {
                 cb_roi_visibility.IsChecked = false;
                 sp_roi_param.IsEnabled = false;
+            }
+        }
+
+        private void tbtn_cpu_gpu_trigger_Checked(object sender, RoutedEventArgs e)
+        {
+            m_usingGPU = true;
+            if (m_yolov5_gpu != null)
+            {
+                m_yolov5 = m_yolov5_gpu;
+            }
+        }
+
+        private void tbtn_cpu_gpu_trigger_Unchecked(object sender, RoutedEventArgs e)
+        {
+            m_usingGPU = false;
+            if (m_yolov5_cpu != null)
+            {
+                m_yolov5 = m_yolov5_cpu;
             }
         }
     }

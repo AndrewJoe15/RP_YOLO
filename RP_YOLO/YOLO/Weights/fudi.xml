@@ -68,7 +68,7 @@
   <Labels>
     <YoloLabel>
       <Id>0</Id>
-      <Name>凹陷</Name>
+      <Name>NG</Name>
       <Kind>Generic</Kind>
       <Color>Yellow</Color>
     </YoloLabel>
